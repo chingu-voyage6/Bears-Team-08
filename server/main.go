@@ -5,8 +5,11 @@ import (
 	_ "github.com/gorilla/websocket"
 	_ "log"
 	_ "net/http"
+	"os"
 )
 
 func main() {
-	fmt.Println("hello world")
+	env := os.Getenv("ENV")
+	isDevelopment := env == "development"
+	fmt.Println("Is development? ", isDevelopment)
 }
