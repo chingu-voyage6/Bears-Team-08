@@ -3,6 +3,7 @@ BUILD_DIR = build
 APP = $(shell find frontend -type f)
 APP_NAME = $(shell pwd | xargs basename)
 SERVER_BIN = $(BUILD_DIR)/$(APP_NAME)
+SERVER_SOURCES = $(shell find server -name "*.go")
 IMPORT_PATH = $(shell pwd | sed "s|^$(GOPATH)/src/||g")
 GIT_HASH = $(shell git rev-parse HEAD)
 LDFLAGS = -w -X main.commitHash=$(GIT_HASH)
@@ -18,7 +19,7 @@ else
 	@npm run build
 endif
 
-$(SERVER_BIN):
+$(SERVER_BIN): $(SERVER_SOURCES)
 	mkdir -p $(BUILD_DIR)
 	go build -ldflags '$(LDFLAGS)' -o $@ $(IMPORT_PATH)/server
 
