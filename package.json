@@ -5,6 +5,7 @@
   "scripts": {
     "start-server": "nodemon --ext ts --watch server --watch .env server/index.ts",
     "start-client": "node scripts/start.js",
+    "prod": "npm run build && PORT=3000 NODE_ENV=production npm run start-server",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },

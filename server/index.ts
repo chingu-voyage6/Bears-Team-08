@@ -1,21 +1,30 @@
 import * as Express from "express";
 import * as bodyParser from "body-parser";
 
+import * as Config from "./config";
+
 const app = Express();
 app.use(bodyParser.urlencoded({ extended: true })); // allow data from a post
 app.use(bodyParser.json());
-
-const port = process.env.PORT || 3001;
 
 const router = Express.Router();
 
 router.get("/", async (req, res) => {
   res.json({ message: "hello world" });
-  console.log("hit");
 });
 
-app.use("/api", router);
+router.use((req, res) => {
+  res.send("404: Page not Found");
+});
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+app.use(Config.baseRoute, router);
+
+if (Config.isProduction) {
+  console.log("is production", Config.staticFiles);
+  app.use("/", Express.static(Config.staticFiles));
+  app.use("/:drawingId", Express.static(Config.indexFile));
+}
+
+app.listen(Config.port, () => {
+  console.log(`Listening on port ${Config.port}`);
 });
