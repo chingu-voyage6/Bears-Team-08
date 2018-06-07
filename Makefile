@@ -14,9 +14,9 @@ build: build_client $(SERVER_BIN)
 
 build_client:
 ifdef YARN
-	@yarn build
+	@yarn build 2>/dev/null
 else
-	@npm run build
+	@npm run build 2>/dev/null
 endif
 
 $(SERVER_BIN): $(SERVER_SOURCES)
@@ -28,9 +28,9 @@ serve_api: $(SERVER_BIN)
 
 serve_client:
 ifdef YARN
-	@yarn build
+	@yarn start
 else
-	@npm run build
+	@npm run start
 endif
 
 clean:
@@ -40,7 +40,7 @@ install:
 ifdef YARN
 	@yarn
 else
-	@npm run build
+	@npm install
 endif
 ifdef DEP
 	dep ensure
