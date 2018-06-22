@@ -14,7 +14,7 @@ export class DrawingBoard extends React.Component<Props, State> {
     // TODO: ref could possible be better way to handle this
     const canvas = findDOMNode(this) as HTMLCanvasElement;
 
-    this.pad = new Pad(canvas);
+    this.pad = Pad.newPad(canvas);
   }
 
   public componentWillUnmount() {

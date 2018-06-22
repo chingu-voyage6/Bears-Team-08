@@ -13,15 +13,50 @@ enum State {
   NotEditing
 }
 
-export class Pad {
-  private context: CanvasRenderingContext2D;
-  private method: PaintObjectKind = PaintObjectKind.Line;
-  private state: State = State.Init;
-  private history: PaintObject[] = [];
-  private seq: number = 0;
+interface PadProps {
+  canvas: HTMLCanvasElement;
+  state: State;
+  seq: number;
+  history: PaintObject[];
+}
 
-  constructor(public readonly canvas: HTMLCanvasElement) {
-    this.context = canvas.getContext("2d");
+export class Pad {
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private method: PaintObjectKind;
+  private state: State;
+  private history: PaintObject[];
+  private seq: number;
+
+  public static fromHistory(canvas: HTMLCanvasElement, history: PaintObject[]) {
+    return new Pad({
+      canvas,
+      state: State.NotEditing,
+      history: history,
+      seq: history.length
+    });
+  }
+
+  public static newPad(canvas: HTMLCanvasElement): Pad {
+    return new Pad({
+      canvas,
+      state: State.Init,
+      history: [],
+      seq: 0
+    });
+  }
+
+  private constructor(props: PadProps) {
+    this.canvas = props.canvas;
+    this.state = props.state;
+    this.context = props.canvas.getContext("2d");
+    this.method = PaintObjectKind.Line;
+    this.history = props.history;
+    this.seq = props.seq;
+
+    this.onResize();
+    this.canvas.addEventListener("onresize", this.onResize, false);
+
     this.canvas.addEventListener("mousedown", this.press, false);
     this.canvas.addEventListener("mousemove", this.drag, false);
     this.canvas.addEventListener("mouseup", this.release, false);
@@ -47,6 +82,8 @@ export class Pad {
   }
 
   public removeEventListeners() {
+    this.canvas.removeEventListener("onresize", this.onResize, false);
+
     // remove event listeners from canvas element
     this.canvas.removeEventListener("mousedown", this.press, false);
     this.canvas.removeEventListener("mousemove", this.drag, false);
@@ -65,13 +102,6 @@ export class Pad {
       this.seq -= 1;
       this.redraw();
     }
-    console.debug("undo");
-  }
-
-  public load(history: PaintObject[]) {
-    this.state = State.NotEditing;
-    this.history = history; // TODO: should this be a deep copy?
-    this.seq = history.length;
   }
 
   public clear() {
@@ -80,24 +110,37 @@ export class Pad {
 
   private press = (e: MouseEvent) => {
     switch (this.state) {
-      case State.Init | State.NotEditing: {
+      case State.Init: {
         this.state = State.Editing;
         const paintObject = this.newPaintObject();
+        this.history[this.seq] = paintObject;
         this.seq += 1;
+        break;
+      }
+      case State.NotEditing: {
+        this.state = State.Editing;
+        const paintObject = this.newPaintObject();
+        this.history[this.seq] = paintObject;
+        this.seq += 1;
+        break;
       }
       case State.Editing: {
+        break;
       }
     }
-    console.debug("pressed");
   };
 
   private drag = (e: MouseEvent) => {
     e.preventDefault();
     switch (this.state) {
-      case State.Init | State.NotEditing: {
+      case State.Init: {
+        break;
+      }
+      case State.NotEditing: {
+        break;
       }
       case State.Editing: {
-        const paintObject = this.history[this.seq];
+        const paintObject = this.history[this.seq - 1];
         switch (paintObject.kind) {
           case PaintObjectKind.Line: {
             const line = paintObject as PaintLine;
@@ -109,25 +152,35 @@ export class Pad {
           case PaintObjectKind.Erase: {
           }
         }
+        this.redraw();
+        break;
       }
     }
-    this.redraw();
-    console.debug("drag");
   };
 
   private release = (e: MouseEvent) => {
+    const paintObject = this.history[this.seq];
     switch (this.state) {
-      case State.Init | State.NotEditing: {
+      case State.Init: {
+        const line = paintObject as PaintLine;
+        const point = Point.fromMouseEvent(e);
+        line.pushPoint(point);
+        break;
+      }
+      case State.NotEditing: {
+        const line = paintObject as PaintLine;
+        const point = Point.fromMouseEvent(e);
+        line.pushPoint(point);
+        break;
       }
       case State.Editing: {
         this.state = State.NotEditing;
+        break;
       }
     }
   };
 
-  private cancel = (e: MouseEvent) => {
-    console.debug("cancel");
-  };
+  private cancel = (e: MouseEvent) => {};
 
   private redraw() {
     this.clear();
@@ -135,6 +188,13 @@ export class Pad {
       this.history[i].draw(this.context);
     }
   }
+
+  private onResize = () => {
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
+    this.clear();
+    this.redraw();
+  };
 
   private newPaintObject(): PaintObject {
     switch (this.method) {

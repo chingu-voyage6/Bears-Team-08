@@ -1,6 +1,6 @@
 export class Point {
   public static fromMouseEvent(e: MouseEvent): Point {
-    return new Point({ x: e.x, y: e.y });
+    return new Point({ x: e.offsetX, y: e.offsetY });
   }
 
   constructor(private coords: { x: number; y: number }) {}
