@@ -1,3 +1,5 @@
+import { type } from "os";
+
 type Req<Kind> = { request: Kind };
 type Res<Kind> = { response: Kind };
 type Err = { error: string };
@@ -25,6 +27,14 @@ export type SavePainting = ThunkAction<
   {}
 >;
 
+export type AddPaintObject = ThunkAction<
+  "ADD_PAINT_OBJECT_REQUEST",
+  "ADD_PAINT_OBJECT_SUCCESS",
+  "ADD_PAINT_OBJECT_ERROR",
+  {},
+  {}
+>;
+
 export type UndoLastPaint = ThunkAction<
   "UNDO_REQUEST",
   "UNDO_SUCCESS",
@@ -48,6 +58,7 @@ export type ChangePaintMethod = {
 
 export type Action =
   | LoadPainting
+  | AddPaintObject
   | SavePainting
   | UndoLastPaint
   | RedoLastPaint
@@ -87,12 +98,12 @@ type ErrCreator<A, _Req> = (req: _Req, err: string) => A;
 export const dispatcher = <_Req, _Res>(fn: Thunk<_Req, _Res>) => <
   A extends Action
 >(
-  tReq: ReqCreator<A, _Req>,
-  tRes: ResCreator<A, _Req, _Res>,
-  tErr: ErrCreator<A, _Req>
+  req: ReqCreator<A, _Req>,
+  res: ResCreator<A, _Req, _Res>,
+  err: ErrCreator<A, _Req>
 ) => (request: _Req) => (dispatch: Dispatch<A>) => {
-  dispatch(tReq(request));
+  dispatch(req(request));
   fn(request)
-    .then(response => dispatch(tRes(request, response)))
-    .catch(err => dispatch(tErr(request, err.message)));
+    .then(response => dispatch(res(request, response)))
+    .catch(err => dispatch(err(request, err.message)));
 };

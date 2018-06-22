@@ -2,13 +2,6 @@ import { combineReducers, Reducer } from "redux";
 
 import { Action } from "../actions";
 
-export type State = {
-  method: string;
-  isSaving: boolean;
-  isLoading: boolean;
-  error: string;
-};
-
 const method = (state: string = "free", action: Action) => {
   switch (action.kind) {
     case "CHANGE_PAINT_METHOD":
@@ -53,6 +46,13 @@ const error = (state: string = "", action: Action): string => {
     default:
       return state;
   }
+};
+
+export type State = {
+  method: string;
+  isSaving: boolean;
+  isLoading: boolean;
+  error: string;
 };
 
 export const initialState: State = {

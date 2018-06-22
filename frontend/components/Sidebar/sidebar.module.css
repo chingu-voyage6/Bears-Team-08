@@ -1,0 +1,10 @@
+:local .Sidebar {
+  background-color: green;
+  grid-area: Sidebar;
+  display: flex;
+  flex-direction: column;
+}
+
+:local .Sidebar button {
+  height: 100px;
+}

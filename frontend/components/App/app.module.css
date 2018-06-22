@@ -1,0 +1,11 @@
+:local .App {
+  display: grid;
+  grid-template:
+    "Navbar Navbar Navbar" 100px
+    "Sidebar DrawingPad DrawingPad" auto
+    "Sidebar DrawingPad DrawingPad" auto / 100px 1fr 1fr;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}

@@ -5,3 +5,7 @@ export const loadPainting = async (): Promise<any> => {
 export const savePainting = async (painting: any): Promise<null> => {
   return;
 };
+
+export const addPaintObject = async (paintObject: any): Promise<null> => {
+  return;
+};

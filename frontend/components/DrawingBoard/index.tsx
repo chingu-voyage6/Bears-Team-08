@@ -2,12 +2,14 @@ import * as React from "react";
 import { findDOMNode } from "react-dom";
 
 import * as Styles from "./drawingBoard.module.css";
+import { connect } from "react-redux";
+
 import { Pad } from "./pad";
 
 export interface Props {}
 interface State {}
 
-export class DrawingBoard extends React.Component<Props, State> {
+class _DrawingBoard extends React.Component<Props, State> {
   private pad: Pad;
 
   public componentDidMount() {
@@ -21,9 +23,15 @@ export class DrawingBoard extends React.Component<Props, State> {
     this.pad.removeEventListeners();
   }
 
+  public componentDidUpdate() {
+    console.debug("Pad updated");
+    return false;
+  }
+
   public render() {
+    console.debug("rendering drawing board");
     return <canvas className={Styles.Board} />;
   }
 }
 
-export default DrawingBoard;
+export const DrawingBoard = connect()(_DrawingBoard);

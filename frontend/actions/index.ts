@@ -7,7 +7,8 @@ import {
   dispatcher,
   asReq,
   asRes,
-  asErr
+  asErr,
+  AddPaintObject
 } from "./action";
 
 import * as Api from "../api";
@@ -37,4 +38,10 @@ export const savePainting = dispatcher(Api.savePainting)<SavePainting>(
   asReq("SAVE_PAINTING_REQUEST"),
   asRes("SAVE_PAINTING_SUCCESS"),
   asErr("SAVE_PAINTING_ERROR")
+);
+
+export const addPaintObject = dispatcher(Api.addPaintObject)<AddPaintObject>(
+  asReq("ADD_PAINT_OBJECT_REQUEST"),
+  asRes("ADD_PAINT_OBJECT_SUCCESS"),
+  asErr("ADD_PAINT_OBJECT_ERROR")
 );

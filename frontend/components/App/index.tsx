@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as Styles from "./app.module.css";
 
+import { Sidebar } from "../Sidebar";
+import { Navbar } from "../Navbar";
 import { DrawingBoard } from "../DrawingBoard";
 
 export interface Props {}
@@ -26,13 +28,9 @@ class App extends React.Component<Props, State> {
   public render() {
     return (
       <div className={Styles.App}>
-        <section className={Styles.Header}>
-          <p>{this.state.message || "Api not hit"}</p>
-        </section>
-        <section className={Styles.Sidebar} />
-        <section className={Styles.Main}>
-          <DrawingBoard />
-        </section>
+        <Navbar />
+        <Sidebar />
+        <DrawingBoard />
       </div>
     );
   }
