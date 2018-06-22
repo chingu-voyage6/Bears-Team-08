@@ -49,13 +49,13 @@ export class Pad {
   private constructor(props: PadProps) {
     this.canvas = props.canvas;
     this.state = props.state;
-    this.context = props.canvas.getContext("2d");
+    this.context = props.canvas.getContext("2d", { alpha: false });
     this.method = PaintObjectKind.Line;
     this.history = props.history;
     this.seq = props.seq;
 
     this.onResize();
-    this.canvas.addEventListener("onresize", this.onResize, false);
+    window.addEventListener("resize", this.onResize, false);
 
     this.canvas.addEventListener("mousedown", this.press, false);
     this.canvas.addEventListener("mousemove", this.drag, false);
@@ -82,7 +82,7 @@ export class Pad {
   }
 
   public removeEventListeners() {
-    this.canvas.removeEventListener("onresize", this.onResize, false);
+    this.canvas.removeEventListener("resize", this.onResize, false);
 
     // remove event listeners from canvas element
     this.canvas.removeEventListener("mousedown", this.press, false);
@@ -102,6 +102,7 @@ export class Pad {
       this.seq -= 1;
       this.redraw();
     }
+    console.debug("undo");
   }
 
   public clear() {
@@ -112,6 +113,7 @@ export class Pad {
     switch (this.state) {
       case State.Init: {
         this.state = State.Editing;
+        const point = new Point({ x: e.offsetX, y: e.offsetY });
         const paintObject = this.newPaintObject();
         this.history[this.seq] = paintObject;
         this.seq += 1;
@@ -145,7 +147,7 @@ export class Pad {
           case PaintObjectKind.Line: {
             const line = paintObject as PaintLine;
             const point = Point.fromMouseEvent(e);
-            line.pushPoint(point);
+            line.addPoint(point);
           }
           case PaintObjectKind.Image: {
           }
@@ -164,13 +166,13 @@ export class Pad {
       case State.Init: {
         const line = paintObject as PaintLine;
         const point = Point.fromMouseEvent(e);
-        line.pushPoint(point);
+        line.addPoint(point);
         break;
       }
       case State.NotEditing: {
         const line = paintObject as PaintLine;
         const point = Point.fromMouseEvent(e);
-        line.pushPoint(point);
+        line.addPoint(point);
         break;
       }
       case State.Editing: {
@@ -184,9 +186,11 @@ export class Pad {
 
   private redraw() {
     this.clear();
+    this.context.save();
     for (let i = 0; i < this.seq; i += 1) {
       this.history[i].draw(this.context);
     }
+    this.context.restore();
   }
 
   private onResize = () => {

@@ -13,13 +13,15 @@ export interface PaintObject {
 
 export class PaintLine implements PaintObject {
   private points: Point[] = [];
-  constructor() {}
+  constructor(public readonly lineWidth = 5) {
+    // new Path2D()
+  }
 
   public get kind() {
     return PaintObjectKind.Line;
   }
 
-  public pushPoint(point: Point) {
+  public addPoint(point: Point) {
     this.points.push(point);
   }
   public popPoint(): Point {
@@ -29,11 +31,12 @@ export class PaintLine implements PaintObject {
   public draw(context: CanvasRenderingContext2D) {
     context.strokeStyle = "#df4b26";
     context.lineJoin = "round";
-    context.lineWidth = 5;
+    context.lineWidth = this.lineWidth;
 
     context.beginPath();
     this.points.map((point, i) => {
       context.beginPath();
+      const { offsetLeft, offsetTop } = context.canvas;
       if (i === 0) {
         context.moveTo(point.x, point.y);
       } else {
