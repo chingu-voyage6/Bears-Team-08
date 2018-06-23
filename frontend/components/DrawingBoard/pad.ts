@@ -1,10 +1,13 @@
-import { Point } from "./point";
+import { Point } from "../../shared/point";
+
 import {
-  PaintLine,
+  Erase,
+  Freehand,
+  Image,
+  Line,
   PaintObject,
   PaintObjectKind,
-  PaintErase,
-  PaintImage
+  Drawable
 } from "./paintObject";
 
 enum State {
@@ -17,7 +20,7 @@ interface PadProps {
   canvas: HTMLCanvasElement;
   state: State;
   seq: number;
-  history: PaintObject[];
+  history: Array<PaintObject>;
 }
 
 export class Pad {
@@ -50,7 +53,7 @@ export class Pad {
     this.canvas = props.canvas;
     this.state = props.state;
     this.context = props.canvas.getContext("2d", { alpha: false });
-    this.method = PaintObjectKind.Line;
+    this.method = PaintObjectKind.Freehand;
     this.history = props.history;
     this.seq = props.seq;
 
@@ -111,14 +114,7 @@ export class Pad {
 
   private press = (e: MouseEvent) => {
     switch (this.state) {
-      case State.Init: {
-        this.state = State.Editing;
-        const point = new Point({ x: e.offsetX, y: e.offsetY });
-        const paintObject = this.newPaintObject();
-        this.history[this.seq] = paintObject;
-        this.seq += 1;
-        break;
-      }
+      case State.Init:
       case State.NotEditing: {
         this.state = State.Editing;
         const paintObject = this.newPaintObject();
@@ -135,54 +131,40 @@ export class Pad {
   private drag = (e: MouseEvent) => {
     e.preventDefault();
     switch (this.state) {
-      case State.Init: {
-        break;
-      }
+      case State.Init:
       case State.NotEditing: {
         break;
       }
       case State.Editing: {
-        const paintObject = this.history[this.seq - 1];
-        switch (paintObject.kind) {
-          case PaintObjectKind.Line: {
-            const line = paintObject as PaintLine;
-            const point = Point.fromMouseEvent(e);
-            line.addPoint(point);
-          }
-          case PaintObjectKind.Image: {
-          }
-          case PaintObjectKind.Erase: {
-          }
-        }
-        this.redraw();
-        break;
+        this.addPaint(e);
       }
     }
   };
 
   private release = (e: MouseEvent) => {
-    const paintObject = this.history[this.seq];
     switch (this.state) {
-      case State.Init: {
-        const line = paintObject as PaintLine;
-        const point = Point.fromMouseEvent(e);
-        line.addPoint(point);
-        break;
-      }
+      case State.Init:
       case State.NotEditing: {
-        const line = paintObject as PaintLine;
-        const point = Point.fromMouseEvent(e);
-        line.addPoint(point);
-        break;
       }
       case State.Editing: {
+        this.addPaint(e);
         this.state = State.NotEditing;
         break;
       }
     }
   };
 
-  private cancel = (e: MouseEvent) => {};
+  private cancel = (e: MouseEvent) => {
+    switch (this.state) {
+      case State.Init:
+      case State.NotEditing:
+        break;
+      case State.Editing: {
+        this.release(e);
+        break;
+      }
+    }
+  };
 
   private redraw() {
     this.clear();
@@ -200,16 +182,37 @@ export class Pad {
     this.redraw();
   };
 
+  private addPaint = (e: MouseEvent) => {
+    const paintObject = this.history[this.seq - 1];
+    switch (paintObject.kind) {
+      case PaintObjectKind.Freehand: {
+        const freehand = paintObject as Freehand;
+        const point = Point.fromMouseEvent(e);
+        freehand.addPoint(point);
+        break;
+      }
+      case PaintObjectKind.Line:
+      case PaintObjectKind.Image:
+      case PaintObjectKind.Erase: {
+        break;
+      }
+    }
+    this.redraw();
+  };
+
   private newPaintObject(): PaintObject {
     switch (this.method) {
+      case PaintObjectKind.Freehand: {
+        return new Freehand();
+      }
       case PaintObjectKind.Line: {
-        return new PaintLine();
+        return new Line();
       }
       case PaintObjectKind.Image: {
-        return new PaintImage();
+        return new Image();
       }
       case PaintObjectKind.Erase: {
-        return new PaintErase();
+        return new Erase();
       }
     }
   }

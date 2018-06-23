@@ -1,30 +1,28 @@
+import * as Api from "../api";
 import {
   Action,
   SavePainting,
   LoadPainting,
-  UndoLastPaint,
-  ChangePaintMethod,
   dispatcher,
   asReq,
   asRes,
   asErr,
   AddPaintObject
 } from "./action";
-
-import * as Api from "../api";
+import { PaintObjectKind } from "../shared/paintObject";
 
 export { Action };
 
-export const undoLastPaint = () => Action => ({
-  kind: "UNDO_LAST_PAINT"
+export const undo = (): Action => ({
+  type: "UNDO"
 });
 
-export const redoLastPaint = () => Action => ({
-  kind: "REDO_LAST_PAINT"
+export const redo = (): Action => ({
+  type: "REDO"
 });
 
-export const changePaintMethod = (method: ChangePaintMethod) => Action => ({
-  kind: "CHANGE_PAINT_METHOD",
+export const changePaintMethod = (method: PaintObjectKind): Action => ({
+  type: "CHANGE_PAINT_METHOD",
   method
 });
 

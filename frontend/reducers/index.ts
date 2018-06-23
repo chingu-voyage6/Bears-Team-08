@@ -3,8 +3,9 @@ import { combineReducers, Reducer } from "redux";
 import { Action } from "../actions";
 
 const method = (state: string = "free", action: Action) => {
-  switch (action.kind) {
+  switch (action.type) {
     case "CHANGE_PAINT_METHOD":
+      console.debug("switching method to", action.method);
       return action.method;
     default:
       return state;
@@ -12,7 +13,7 @@ const method = (state: string = "free", action: Action) => {
 };
 
 const isSaving = (state: boolean = false, action: Action) => {
-  switch (action.kind) {
+  switch (action.type) {
     case "SAVE_PAINTING_REQUEST":
       return true;
     case "SAVE_PAINTING_SUCCESS":
@@ -24,7 +25,7 @@ const isSaving = (state: boolean = false, action: Action) => {
 };
 
 const isLoading = (state: boolean = false, action: Action): boolean => {
-  switch (action.kind) {
+  switch (action.type) {
     case "LOAD_PAINTING_REQUEST":
       return true;
     case "LOAD_PAINTING_SUCCESS":
@@ -36,7 +37,7 @@ const isLoading = (state: boolean = false, action: Action): boolean => {
 };
 
 const error = (state: string = "", action: Action): string => {
-  switch (action.kind) {
+  switch (action.type) {
     case "LOAD_PAINTING_REQUEST":
     case "SAVE_PAINTING_REQUEST":
       return "";

@@ -1,33 +1,16 @@
-import { Point } from "./point";
+import { Point } from "../../shared/point";
+import * as Paint from "../../shared/paintObject";
+import { PaintObjectKind } from "../../shared/paintObject";
 
-export enum PaintObjectKind {
-  Line,
-  Image,
-  Erase
-}
+export { PaintObjectKind } from "../../shared/paintObject";
 
-export interface PaintObject {
-  readonly kind: PaintObjectKind;
-  draw(ctx: CanvasRenderingContext2D): void;
-}
+export type Drawable = {
+  draw: (ctx: CanvasRenderingContext2D) => void;
+};
 
-export class PaintLine implements PaintObject {
-  private points: Point[] = [];
-  constructor(public readonly lineWidth = 5) {
-    // new Path2D()
-  }
+export type PaintObject = Paint.PaintObject & Drawable;
 
-  public get kind() {
-    return PaintObjectKind.Line;
-  }
-
-  public addPoint(point: Point) {
-    this.points.push(point);
-  }
-  public popPoint(): Point {
-    return this.points.pop();
-  }
-
+export class Freehand extends Paint.Freehand implements Drawable {
   public draw(context: CanvasRenderingContext2D) {
     context.strokeStyle = "#df4b26";
     context.lineJoin = "round";
@@ -49,12 +32,14 @@ export class PaintLine implements PaintObject {
   }
 }
 
-export class PaintImage implements PaintObject {
-  public kind = PaintObjectKind.Image;
+export class Line extends Paint.Line implements Drawable {
   public draw(context: CanvasRenderingContext2D) {}
 }
 
-export class PaintErase implements PaintObject {
-  public kind = PaintObjectKind.Image;
+export class Erase extends Paint.Erase implements Drawable {
+  public draw(context: CanvasRenderingContext2D) {}
+}
+
+export class Image extends Paint.Image implements Drawable {
   public draw(context: CanvasRenderingContext2D) {}
 }

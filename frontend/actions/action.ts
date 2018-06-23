@@ -1,13 +1,13 @@
-import { type } from "os";
+import { PaintObjectKind } from "../shared/paintObject";
 
 type Req<Kind> = { request: Kind };
 type Res<Kind> = { response: Kind };
 type Err = { error: string };
 
 type ThunkAction<ReqKind, ResKind, ErrKind, _Req, _Res> =
-  | ({ kind: ReqKind } & Req<_Req>)
-  | ({ kind: ResKind } & Req<_Req> & Res<_Res>)
-  | ({ kind: ErrKind } & Req<_Req> & Err);
+  | ({ type: ReqKind } & Req<_Req>)
+  | ({ type: ResKind } & Req<_Req> & Res<_Res>)
+  | ({ type: ErrKind } & Req<_Req> & Err);
 
 export type Painting = { painting: any };
 
@@ -35,13 +35,9 @@ export type AddPaintObject = ThunkAction<
   {}
 >;
 
-export type UndoLastPaint = ThunkAction<
-  "UNDO_REQUEST",
-  "UNDO_SUCCESS",
-  "UNDO_ERROR",
-  {},
-  {}
->;
+export type Undo = { type: "UNDO" };
+
+export type Redo = { type: "REDO" };
 
 export type RedoLastPaint = ThunkAction<
   "REDO_REQUEST",
@@ -52,41 +48,41 @@ export type RedoLastPaint = ThunkAction<
 >;
 
 export type ChangePaintMethod = {
-  kind: "CHANGE_PAINT_METHOD";
-  method: string;
+  type: "CHANGE_PAINT_METHOD";
+  method: PaintObjectKind;
 };
 
 export type Action =
-  | LoadPainting
   | AddPaintObject
+  | ChangePaintMethod
+  | LoadPainting
+  | Redo
   | SavePainting
-  | UndoLastPaint
-  | RedoLastPaint
-  | ChangePaintMethod;
+  | Undo;
 
-type ActionKind = Action["kind"];
+type ActionKind = Action["type"];
 
 // TypeScript won't narrow a `ThunkAction` union directly, but
 // we can help it out by tagging the three permutations.
-export const asReq = <ReqKind extends ActionKind>(kind: ReqKind) => <_Req>(
+export const asReq = <ReqKind extends ActionKind>(type: ReqKind) => <_Req>(
   request: _Req
 ) => ({
-  kind,
+  type,
   request
 });
 
-export const asRes = <ResKind extends ActionKind>(kind: ResKind) => <
+export const asRes = <ResKind extends ActionKind>(type: ResKind) => <
   _Req,
   _Res
 >(
   request: _Req,
   response: _Res
-) => ({ kind, request, response });
+) => ({ type, request, response });
 
-export const asErr = <ErrKind extends ActionKind>(kind: ErrKind) => <_Req>(
+export const asErr = <ErrKind extends ActionKind>(type: ErrKind) => <_Req>(
   request: _Req,
   error: string
-) => ({ kind, request, error });
+) => ({ type, request, error });
 
 type Dispatch<A> = (a: A) => A;
 type Thunk<Req, Res> = (request: Req) => Promise<Res>;
