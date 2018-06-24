@@ -8,9 +8,9 @@ const state = {
 exports.connect = function(url, done) {
     if (state.url == url) return done();
 
-    MongoClient.connect(url, function(err, db) {
+    MongoClient.connect(url, function(err, client) {
         if (err) return done(err);
-        state.db = db;
+        state.db = client.db('quick-draw'); // TODO: Move this to config.ts
         state.url = url;
         done()
     })

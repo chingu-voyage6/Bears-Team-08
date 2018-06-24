@@ -4,6 +4,7 @@ const passport = require('passport');
 
 import * as Config from "./config";
 
+const db = require('./db');
 const user = require('./user');
 
 const app = Express();
@@ -32,6 +33,15 @@ if (Config.isProduction) {
   app.use("/:drawingId", Express.static(Config.indexFile));
 }
 
-app.listen(Config.port, () => {
-  console.log(`Listening on port ${Config.port}`);
+// Connect to Mongo on start
+// TODO: Move the url to config.ts
+db.connect('mongodb://localhost:27017', function(err) {
+    if (err) {
+        console.log('Unable to connect to Mongo.')
+        process.exit(1)
+    } else {
+        app.listen(Config.port, () => {
+            console.log(`Listening on port ${Config.port}`);
+        });
+    }
 });
