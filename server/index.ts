@@ -1,11 +1,17 @@
 import * as Express from "express";
 import * as bodyParser from "body-parser";
+const passport = require('passport');
 
 import * as Config from "./config";
+
+const user = require('./user');
 
 const app = Express();
 app.use(bodyParser.urlencoded({ extended: true })); // allow data from a post
 app.use(bodyParser.json());
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const router = Express.Router();
 
@@ -17,6 +23,7 @@ router.use((req, res) => {
   res.send("404: Page not Found");
 });
 
+app.use(Config.baseRoute + '/user', user);
 app.use(Config.baseRoute, router);
 
 if (Config.isProduction) {
