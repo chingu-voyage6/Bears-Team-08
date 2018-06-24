@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GithubStrategy = require('passport-github').Strategy;
+const db = require('./db');
 
 passport.use(new LocalStrategy(
     {
@@ -10,12 +11,28 @@ passport.use(new LocalStrategy(
         passwordField: 'password'
     },
     function(username, password, done) {
-        // TODO: Search DB for user
-        if (username == 'test' && password == 'test') {
-            return done(null, {username: 'test'});
-        } else {
-            return done(null, false, { message: 'Error' });
-        }
+        const users = db.get().collection('users');
+
+        users.findOne({username: username}, function(err, res) {
+            if (err) throw err;
+
+            if (res) {
+                if (res.password == password) {
+                    return done(null, res);
+                }
+
+                return done(null, false);
+            } else {
+                const user = {username: username, password: password}; // TODO: Encrypt the password
+
+                users.insertOne(user, function(err, res) {
+                    if (err) throw err;
+
+                    return done(null, user);
+                });
+            }
+
+        });
     }
 ));
 
@@ -37,10 +54,9 @@ router.get('/auth', function (req, res) {
 });
 
 router.post("/auth/local",
-    passport.authenticate('local'),
+    passport.authenticate('local', { failureFlash: true }),
     function (req, res) {
-        res.redirect('/api/user/auth');
-        // res.json({ message: "Welcome, " + req.user.username });
+        res.json({ message: "Welcome, " + req.user.username });
     });
 
 module.exports = router;
