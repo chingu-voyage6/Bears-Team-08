@@ -24,7 +24,7 @@ class _DrawingBoard extends React.Component<Props, State> {
   }
 
   public componentDidUpdate() {
-    console.debug("Pad updated");
+    /* this.pad.paintMethod(this.props.method) */
     return false;
   }
 

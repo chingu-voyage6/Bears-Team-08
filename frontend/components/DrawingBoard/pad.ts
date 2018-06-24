@@ -105,7 +105,6 @@ export class Pad {
       this.seq -= 1;
       this.redraw();
     }
-    console.debug("undo");
   }
 
   public clear() {
@@ -168,11 +167,11 @@ export class Pad {
 
   private redraw() {
     this.clear();
-    this.context.save();
+    // this.context.save();
     for (let i = 0; i < this.seq; i += 1) {
       this.history[i].draw(this.context);
     }
-    this.context.restore();
+    // this.context.restore();
   }
 
   private onResize = () => {

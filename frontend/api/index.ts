@@ -1,4 +1,9 @@
-export const loadPainting = async (): Promise<any> => {
+export const login = async (): Promise<any> => {
+  return Promise.resolve(0);
+};
+
+export const loadPainting = async (user: any): Promise<any> => {
+  // axios("/api", { header: { AuthoSTuff: `Bearer ${user.token}` } });
   return Promise.resolve(0);
 };
 
