@@ -1,10 +1,9 @@
 import * as Express from "express";
 import * as bodyParser from "body-parser";
-const passport = require('passport');
+import * as passport from 'passport';
 
 import * as Config from "./config";
-
-const db = require('./db');
+import * as db from './db';
 const user = require('./user');
 
 const app = Express();
@@ -35,13 +34,11 @@ if (Config.isProduction) {
 
 // Connect to Mongo on start
 // TODO: Move the url to config.ts
-db.connect('mongodb://localhost:27017', function(err) {
-    if (err) {
-        console.log('Unable to connect to Mongo.')
-        process.exit(1)
-    } else {
-        app.listen(Config.port, () => {
-            console.log(`Listening on port ${Config.port}`);
-        });
-    }
+db.connect('mongodb://localhost:27017').then( () => {
+    app.listen(Config.port, () => {
+        console.log(`Listening on port ${Config.port}`);
+    });
+}).catch((err) => {
+    console.log('Unable to connect to Mongo.');
+    process.exit(1)
 });
