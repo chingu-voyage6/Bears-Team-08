@@ -1,4 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
+import { MongoClient } from "mongodb";
 
 const state = {
     db: null,
@@ -16,7 +16,7 @@ export const connect = async (url: string): Promise<void> => {
     return state.db
 };
 
-export const  close = (done) => {
+export const close = (done) => {
     if (state.db) {
         state.db.close(function(err, result) {
             state.db = null;

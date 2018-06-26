@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const GithubStrategy = require('passport-github').Strategy;
+import * as express from 'express';
+import * as passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local'
+import { Strategy as GithubStrategy } from "passport-github";
+
 import * as db from "./db";
 
 passport.use(new LocalStrategy(
@@ -40,6 +40,8 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
     done(null, user);
 });
+
+const router = express.Router();
 
 router.get('/auth', (req, res) => {
     if (req.user) {
