@@ -5,22 +5,18 @@ const state = {
     url: null,
 };
 
-exports.connect = function(url, done) {
-    if (state.url == url) return done();
-
-    MongoClient.connect(url, function(err, client) {
-        if (err) return done(err);
-        state.db = client.db('quick-draw'); // TODO: Move this to config.ts
-        state.url = url;
-        done()
-    })
+export const connect = async (url: string): Promise<void> => {
+    if (state.url === url) return Promise.resolve();
+    const client = await MongoClient.connect(url);
+    state.db = await client.db("quick-draw");
+    state.url = url;
 };
 
-exports.get = function() {
+ export const get = () => {
     return state.db
 };
 
-exports.close = function(done) {
+export const  close = (done) => {
     if (state.db) {
         state.db.close(function(err, result) {
             state.db = null;

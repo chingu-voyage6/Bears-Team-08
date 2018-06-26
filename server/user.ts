@@ -3,36 +3,32 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GithubStrategy = require('passport-github').Strategy;
-const db = require('./db');
+import * as db from "./db";
 
 passport.use(new LocalStrategy(
     {
         usernameField: 'username',
         passwordField: 'password'
     },
-    function(username, password, done) {
-        const users = db.get().collection('users');
+    async (username, password, done): Promise<void> => {
+        const users = await db.get().collection('users');
+        const user = await users.findOne({ username });
 
-        users.findOne({username: username}, function(err, res) {
-            if (err) throw err;
-
-            if (res) {
-                if (res.password == password) {
-                    return done(null, res);
-                }
-
-                return done(null, false);
+        if (user) {
+            if (user.password === password) { // TODO: Encrypt the password
+                done(null, user);
+                return Promise.resolve()
             } else {
-                const user = {username: username, password: password}; // TODO: Encrypt the password
-
-                users.insertOne(user, function(err, res) {
-                    if (err) throw err;
-
-                    return done(null, user);
-                });
+                done(null, false);
+                return Promise.resolve()
             }
 
-        });
+        } else {
+            const user = {username, password}; // TODO: Encrypt the password
+            await users.insertOne(user);
+            done(null, user);
+            return Promise.resolve()
+        }
     }
 ));
 
@@ -45,7 +41,7 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 });
 
-router.get('/auth', function (req, res) {
+router.get('/auth', (req, res) => {
     if (req.user) {
         res.json({ message: "Welcome, " + req.user.username });
     } else {
@@ -55,7 +51,7 @@ router.get('/auth', function (req, res) {
 
 router.post("/auth/local",
     passport.authenticate('local', { failureFlash: true }),
-    function (req, res) {
+    (req, res) => {
         res.json({ message: "Welcome, " + req.user.username });
     });
 
