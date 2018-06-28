@@ -7,7 +7,6 @@ import { Drawing } from "../shared/drawing";
 const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   switch (action.type) {
     case "CHANGE_PAINT_METHOD":
-      console.debug("switching method to", action.method);
       return action.method;
     default:
       return state;

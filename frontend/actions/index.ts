@@ -7,7 +7,7 @@ import {
   Redo,
   SaveDrawing,
   Undo,
-  UpdatePaint,
+  ModifyPaint,
   asErr,
   asReq,
   asRes,
@@ -52,10 +52,10 @@ export const addPaint = dispatcher(Api.addPaint)<AddPaint>(
   asErr("ADD_PAINT_ERROR")
 );
 
-export const updatePaint = dispatcher(Api.updatePaint)<UpdatePaint>(
-  asReq("UPDATE_PAINT_REQUEST"),
-  asRes("UPDATE_PAINT_SUCCESS"),
-  asErr("UPDATE_PAINT_ERROR")
+export const updatePaint = dispatcher(Api.updatePaint)<ModifyPaint>(
+  asReq("MODIFY_PAINT_REQUEST"),
+  asRes("MODIFY_PAINT_SUCCESS"),
+  asErr("MODIFY_PAINT_ERROR")
 );
 
 export const deletePaint = dispatcher(Api.deletePaint)<DeletePaint>(

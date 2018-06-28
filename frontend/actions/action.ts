@@ -42,10 +42,10 @@ export type AddPaint = ThunkAction<
   {}
 >;
 
-export type UpdatePaint = ThunkAction<
-  "UPDATE_PAINT_REQUEST",
-  "UPDATE_PAINT_SUCCESS",
-  "UPDATE_PAINT_ERROR",
+export type ModifyPaint = ThunkAction<
+  "MODIFY_PAINT_REQUEST",
+  "MODIFY_PAINT_SUCCESS",
+  "MODIFY_PAINT_ERROR",
   {},
   {}
 >;
@@ -81,7 +81,7 @@ export type Action =
   | Redo
   | Undo
   | AddPaint
-  | UpdatePaint
+  | ModifyPaint
   | DeletePaint
   | LoadDrawing
   | SaveDrawing;

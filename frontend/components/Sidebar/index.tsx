@@ -3,50 +3,74 @@ import * as Redux from "redux";
 import { connect } from "react-redux";
 
 import * as Styles from "./sidebar.module.css";
+import { Button } from "../Button";
 import { State } from "../../reducers";
 import { Action, redo, undo, changePaintMethod } from "../../actions";
 import { PaintKind } from "../../shared/paint";
 import { compose } from "../../utils";
 
-export type ConnectedState = {};
-
-export type ConnectedDispatch = {
-  changeMethod: (method: PaintKind) => void;
+type ConnectedState = {
+  method: PaintKind;
 };
 
-type Props = ConnectedState & ConnectedDispatch;
+type ConnectedDispatch = {
+  changeMethod: (method: PaintKind) => void;
+  undo: () => void;
+  redo: () => void;
+};
+
+export type Props = ConnectedState & ConnectedDispatch;
 
 class _SideBar extends React.Component<Props> {
   public render() {
+    const { method } = this.props;
     return (
       <section className={Styles.Sidebar}>
-        <button>redo</button>
-        <button>undo</button>
-        <button onClick={this.handleMethodChange(PaintKind.Freehand)}>
+        <Button onClick={this.props.undo}>undo</Button>
+        <Button onClick={this.props.redo}>redo</Button>
+        <Button
+          active={method === PaintKind.Freehand}
+          onClick={this.handleMethodClick(PaintKind.Freehand)}
+        >
           freehand
-        </button>
-        <button onClick={this.handleMethodChange(PaintKind.Line)}>line</button>
-        <button onClick={this.handleMethodChange(PaintKind.Image)}>
+        </Button>
+        <Button
+          active={method === PaintKind.Line}
+          onClick={this.handleMethodClick(PaintKind.Line)}
+        >
+          line
+        </Button>
+        <Button
+          active={method === PaintKind.Image}
+          onClick={this.handleMethodClick(PaintKind.Image)}
+        >
           Image
-        </button>
-        <button onClick={this.handleMethodChange(PaintKind.Erase)}>
+        </Button>
+        <Button
+          active={method === PaintKind.Erase}
+          onClick={this.handleMethodClick(PaintKind.Erase)}
+        >
           Erase
-        </button>
+        </Button>
       </section>
     );
   }
 
-  public handleMethodChange = (method: PaintKind) => () => {
+  public handleMethodClick = (method: PaintKind) => () => {
     this.props.changeMethod(method);
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({});
+const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
+  method: state.method
+});
 
 const mapDispatchToProps = (
   dispatch: Redux.Dispatch<Action>
 ): ConnectedDispatch => ({
-  changeMethod: (method: PaintKind) => dispatch(changePaintMethod(method))
+  changeMethod: (method: PaintKind) => dispatch(changePaintMethod(method)),
+  undo: () => undo(dispatch),
+  redo: () => redo(dispatch)
 });
 
 export const Sidebar = compose(

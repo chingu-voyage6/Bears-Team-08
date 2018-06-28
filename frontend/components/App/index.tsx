@@ -21,7 +21,6 @@ class App extends React.Component<Props, State> {
     const res = await fetch("/api");
     const json = await res.json();
     const message = json["message"];
-    console.log("message is", message);
     this.setState({ message });
   }
 
