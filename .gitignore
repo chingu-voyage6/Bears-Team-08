@@ -33,3 +33,8 @@ yarn-debug.log*
 yarn-error.log*
 
 /vendor
+
+.idea/
+.vagrant/
+Vagrantfile
+ubuntu-xenial-16.04-cloudimg-console.log
