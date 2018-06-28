@@ -21,37 +21,35 @@ type ConnectedDispatch = {
 
 export type Props = ConnectedState & ConnectedDispatch;
 
+type MethodButtonProps = {
+  method: PaintKind;
+  kind: PaintKind;
+  handleClick: (method: PaintKind) => () => void;
+};
+
 class _SideBar extends React.Component<Props> {
+  private renderMethodButton = (
+    kind: PaintKind,
+    text: string
+  ): React.ReactElement<Button> => {
+    const active = this.props.method === kind;
+    return (
+      <Button active={active} onClick={this.handleMethodClick(kind)}>
+        {text}
+      </Button>
+    );
+  };
+
   public render() {
     const { method } = this.props;
     return (
       <section className={Styles.Sidebar}>
         <Button onClick={this.props.undo}>undo</Button>
         <Button onClick={this.props.redo}>redo</Button>
-        <Button
-          active={method === PaintKind.Freehand}
-          onClick={this.handleMethodClick(PaintKind.Freehand)}
-        >
-          freehand
-        </Button>
-        <Button
-          active={method === PaintKind.Line}
-          onClick={this.handleMethodClick(PaintKind.Line)}
-        >
-          line
-        </Button>
-        <Button
-          active={method === PaintKind.Image}
-          onClick={this.handleMethodClick(PaintKind.Image)}
-        >
-          Image
-        </Button>
-        <Button
-          active={method === PaintKind.Erase}
-          onClick={this.handleMethodClick(PaintKind.Erase)}
-        >
-          Erase
-        </Button>
+        {this.renderMethodButton(PaintKind.Freehand, "Freehand")}
+        {this.renderMethodButton(PaintKind.Line, "Line")}
+        {this.renderMethodButton(PaintKind.Image, "Image")}
+        {this.renderMethodButton(PaintKind.Erase, "Erase")}
       </section>
     );
   }
