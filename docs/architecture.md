@@ -22,3 +22,11 @@ a history of undos.
 ## State management
 
 Redux
+
+### Actions
+
+Api based actions:
+
+- LoadDrawing
+- SaveDrawing
+- AddPaint

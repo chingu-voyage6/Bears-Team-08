@@ -28,18 +28,6 @@ type MethodButtonProps = {
 };
 
 class _SideBar extends React.Component<Props> {
-  private renderMethodButton = (
-    kind: PaintKind,
-    text: string
-  ): React.ReactElement<Button> => {
-    const active = this.props.method === kind;
-    return (
-      <Button active={active} onClick={this.handleMethodClick(kind)}>
-        {text}
-      </Button>
-    );
-  };
-
   public render() {
     const { method } = this.props;
     return (
@@ -54,8 +42,20 @@ class _SideBar extends React.Component<Props> {
     );
   }
 
-  public handleMethodClick = (method: PaintKind) => () => {
+  private handleMethodClick = (method: PaintKind) => () => {
     this.props.changeMethod(method);
+  };
+
+  private renderMethodButton = (
+    kind: PaintKind,
+    text: string
+  ): React.ReactElement<Button> => {
+    const active = this.props.method === kind;
+    return (
+      <Button active={active} onClick={this.handleMethodClick(kind)}>
+        {text}
+      </Button>
+    );
   };
 }
 

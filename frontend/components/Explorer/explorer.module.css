@@ -1,0 +1,4 @@
+:local .Explorer {
+  grid-area: Explorer;
+  background-color: green;
+}

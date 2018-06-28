@@ -1,11 +1,19 @@
 :local .App {
   display: grid;
+  width: 100%;
+  height: 100vh;
+}
+
+:local .App.Drawing {
   grid-template:
     "Navbar Navbar Navbar" 100px
     "Sidebar DrawingPad DrawingPad" auto
     "Sidebar DrawingPad DrawingPad" auto / 100px 1fr 1fr;
-  text-align: center;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+}
+
+:local .App.Exploring {
+  grid-template:
+    "Navbar Navbar Navbar" 100px
+    "Explorer Explorer Explorer" auto
+    "Explorer Explorer Explorer" auto / 1fr 1fr 1fr;
 }

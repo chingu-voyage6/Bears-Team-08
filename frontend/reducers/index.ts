@@ -13,8 +13,11 @@ const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   }
 };
 
-const drawing = (state: Drawing = new Drawing(), action: Action) => {
+const drawing = (state: Drawing = null, action: Action) => {
   switch (action.type) {
+    case "NEW_DRAWING_REQUEST": {
+      return new Drawing(action.request.name);
+    }
     default:
       return state;
   }
@@ -22,8 +25,11 @@ const drawing = (state: Drawing = new Drawing(), action: Action) => {
 
 const isSaving = (state: boolean = false, action: Action) => {
   switch (action.type) {
+    case "NEW_DRAWING_REQUEST":
     case "SAVE_DRAWING_REQUEST":
       return true;
+    case "NEW_DRAWING_SUCCESS":
+    case "NEW_DRAWING_ERROR":
     case "SAVE_DRAWING_SUCCESS":
     case "SAVE_DRAWING_ERROR":
       return false;
@@ -59,7 +65,7 @@ const error = (state: string = "", action: Action): string => {
 
 export type State = {
   method: PaintKind;
-  drawing: Drawing;
+  drawing?: Drawing;
   isSaving: boolean;
   isLoading: boolean;
   error: string;
@@ -67,7 +73,7 @@ export type State = {
 
 export const initialState: State = {
   method: PaintKind.Freehand,
-  drawing: new Drawing(),
+  drawing: null,
   isSaving: false,
   isLoading: false,
   error: ""

@@ -2,8 +2,8 @@ import { PaintKind } from "../shared/paint";
 import { Drawing } from "../shared/drawing";
 import { Paint } from "../shared/paint";
 
-type Req<Kind> = { request: Kind };
-type Res<Kind> = { response: Kind };
+type Req<T> = { request: T };
+type Res<T> = { response: T };
 type Err = { error: string };
 
 export type ThunkAction<ReqKind, ResKind, ErrKind, _Req, _Res> =
@@ -16,63 +16,83 @@ export type ChangePaintMethod = {
   method: PaintKind;
 };
 
+export type UndoReq = {};
+export type UndoRes = {};
 export type Undo = ThunkAction<
   "UNDO_REQUEST",
   "UNDO_SUCCESS",
   "UNDO_ERROR",
-  {},
-  {}
+  UndoReq,
+  UndoRes
 >;
 
+export type RedoReq = {};
+export type RedoRes = {};
 export type Redo = ThunkAction<
   "REDO_REQUEST",
   "REDO_SUCCESS",
   "REDO_ERROR",
-  {},
-  {}
+  UndoReq,
+  UndoRes
 >;
 
-export type Paint = { paint: Paint };
-
+export type AddPaintReq = {};
+export type AddPaintRes = {};
 export type AddPaint = ThunkAction<
   "ADD_PAINT_REQUEST",
   "ADD_PAINT_SUCCESS",
   "ADD_PAINT_ERROR",
-  {},
-  {}
+  AddPaintReq,
+  AddPaintRes
 >;
 
+export type ModifyPaintReq = {};
+export type ModifyPaintRes = {};
 export type ModifyPaint = ThunkAction<
   "MODIFY_PAINT_REQUEST",
   "MODIFY_PAINT_SUCCESS",
   "MODIFY_PAINT_ERROR",
-  {},
-  {}
+  ModifyPaintReq,
+  ModifyPaintRes
 >;
 
+export type DeletePaintReq = {};
+export type DeletePaintRes = {};
 export type DeletePaint = ThunkAction<
   "DELETE_PAINT_REQUEST",
   "DELETE_PAINT_SUCCESS",
   "DELETE_PAINT_ERROR",
-  {},
-  {}
+  DeletePaintReq,
+  DeletePaintRes
 >;
 
-export type Drawing = { drawing: Drawing };
+export type NewDrawingReq = { name: string };
+export type NewDrawingRes = { drawing: Drawing };
+export type NewDrawing = ThunkAction<
+  "NEW_DRAWING_REQUEST",
+  "NEW_DRAWING_SUCCESS",
+  "NEW_DRAWING_ERROR",
+  NewDrawingReq,
+  NewDrawingRes
+>;
 
+export type LoadDrawingReq = { id: string };
+export type LoadDrawingRes = { drawing: Drawing };
 export type LoadDrawing = ThunkAction<
   "LOAD_DRAWING_REQUEST",
   "LOAD_DRAWING_SUCCESS",
   "LOAD_DRAWING_ERROR",
-  {},
-  Drawing
+  LoadDrawingReq,
+  LoadDrawingRes
 >;
 
+export type SaveDrawingReq = { drawing: Drawing };
+export type SaveDrawingRes = {};
 export type SaveDrawing = ThunkAction<
   "SAVE_DRAWING_REQUEST",
   "SAVE_DRAWING_SUCCESS",
   "SAVE_DRAWING_ERROR",
-  Drawing,
+  {},
   {}
 >;
 
@@ -83,6 +103,7 @@ export type Action =
   | AddPaint
   | ModifyPaint
   | DeletePaint
+  | NewDrawing
   | LoadDrawing
   | SaveDrawing;
 

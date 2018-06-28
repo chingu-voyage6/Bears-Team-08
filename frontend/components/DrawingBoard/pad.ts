@@ -1,10 +1,10 @@
 import { Point } from "../../shared/point";
 
 import {
-  ErasePaint,
-  FreehandPaint,
-  ImagePaint,
-  LinePaint,
+  PaintImage,
+  PaintFreehand,
+  PaintLine,
+  PaintErase,
   Paint,
   PaintKind
 } from "../../shared/paint";
@@ -184,7 +184,7 @@ export class Pad {
     const paint = this.history[this.seq - 1];
     switch (paint.kind) {
       case PaintKind.Freehand: {
-        const freehand = paint as FreehandPaint;
+        const freehand = paint as PaintFreehand;
         const point = Point.fromMouseEvent(e);
         freehand.addPoint(point);
         break;
@@ -201,16 +201,16 @@ export class Pad {
   private newPaintObject(): Paint {
     switch (this.method) {
       case PaintKind.Freehand: {
-        return new FreehandPaint();
+        return new PaintFreehand();
       }
       case PaintKind.Line: {
-        return new LinePaint();
+        return new PaintLine();
       }
       case PaintKind.Image: {
-        return new ImagePaint();
+        return new PaintImage();
       }
       case PaintKind.Erase: {
-        return new ErasePaint();
+        return new PaintErase();
       }
     }
   }

@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 
 import "./styles.css";
 
-import App from "./components/App";
+import { App } from "./components/App";
 import { rootReducer } from "./reducers";
 import registerServiceWorker from "./registerServiceWorker";
 

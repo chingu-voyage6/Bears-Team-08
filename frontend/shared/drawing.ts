@@ -1,19 +1,35 @@
 import { Paint } from "./paint";
+import { uuidv4 } from "./util";
 
-export type DrawingJSON = {};
+export type DrawingJSON = {
+  id: string;
+  name: string;
+  paints: Paint[];
+};
+
+export type DrawingOptions = {
+  paints?: Paint[];
+  history?: any[];
+};
 
 export class Drawing {
+  readonly id: string;
+  name: string;
   paints: Paint[];
+  history: any[];
   width: number;
   height: number;
 
   static fromJSON(json: DrawingJSON): Drawing {
     const paints = [];
-    return new Drawing(paints);
+    const history = [];
+    return new Drawing(json.name, { paints, history });
   }
 
-  constructor(paints?: Paint[]) {
-    this.paints = paints || [];
+  constructor(name, options: DrawingOptions = {}) {
+    this.id = uuidv4();
+    this.paints = options.paints || [];
+    this.history = options.history || [];
     this.width = 500;
     this.height = 500;
   }

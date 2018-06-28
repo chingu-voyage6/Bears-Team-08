@@ -1,0 +1,3 @@
+- drawing: Drawing object
+- paint: Paint object
+- ctx: context of CanvasRenderingContext2D object
