@@ -19,6 +19,7 @@ passport.use(new LocalStrategy(
 
         if (user) {
             if (user.password === password) { // TODO: Encrypt the password
+                delete user.password;
                 done(null, user);
                 return Promise.resolve()
             } else {
@@ -29,6 +30,7 @@ passport.use(new LocalStrategy(
         } else {
             const user = {username, password}; // TODO: Encrypt the password
             await users.insertOne(user);
+            delete user.password;
             done(null, user);
             return Promise.resolve()
         }
