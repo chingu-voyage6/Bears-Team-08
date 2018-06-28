@@ -83,28 +83,25 @@ export async function authenticateJWT(
         try {
             const { username } = verifyToken(token);
             const users = await db.get().collection('users');
-            return await users.findOne({ username });
+            const user = await users.findOne({ username });
+            delete user.password;
+            return user;
         } catch (err) {
-            if (err instanceof jwt.JsonWebTokenError) {
-                return Promise.resolve(null);
-            }
             throw err;
         }
+    } else {
+        throw 'Miss Token'
     }
-
-    return null;
 }
 
 const router = express.Router();
 
 router.get('/auth', (req, res) => {
-    if (req.user) {
-        const token = issueJWT({username: req.user.username});
-
-        res.json({ token });
-    } else {
-        res.json({ message: "Welcome, please login"});
-    }
+    authenticateJWT(req, res).then(function(user) {
+        res.json({ user })
+    }).catch(function (err) {
+        res.json({ err });
+    })
 });
 
 router.post("/auth/local",
