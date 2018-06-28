@@ -1,8 +1,10 @@
 import { combineReducers, Reducer } from "redux";
 
 import { Action } from "../actions";
+import { PaintKind } from "../shared/paint";
+import { Drawing } from "../shared/drawing";
 
-const method = (state: string = "free", action: Action) => {
+const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   switch (action.type) {
     case "CHANGE_PAINT_METHOD":
       console.debug("switching method to", action.method);
@@ -12,12 +14,19 @@ const method = (state: string = "free", action: Action) => {
   }
 };
 
+const drawing = (state: Drawing = new Drawing(), action: Action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
+
 const isSaving = (state: boolean = false, action: Action) => {
   switch (action.type) {
-    case "SAVE_PAINTING_REQUEST":
+    case "SAVE_DRAWING_REQUEST":
       return true;
-    case "SAVE_PAINTING_SUCCESS":
-    case "SAVE_PAINTING_ERROR":
+    case "SAVE_DRAWING_SUCCESS":
+    case "SAVE_DRAWING_ERROR":
       return false;
     default:
       return state;
@@ -26,10 +35,10 @@ const isSaving = (state: boolean = false, action: Action) => {
 
 const isLoading = (state: boolean = false, action: Action): boolean => {
   switch (action.type) {
-    case "LOAD_PAINTING_REQUEST":
+    case "LOAD_DRAWING_REQUEST":
       return true;
-    case "LOAD_PAINTING_SUCCESS":
-    case "LOAD_PAINTING_ERROR":
+    case "LOAD_DRAWING_SUCCESS":
+    case "LOAD_DRAWING_ERROR":
       return false;
     default:
       return state;
@@ -38,11 +47,11 @@ const isLoading = (state: boolean = false, action: Action): boolean => {
 
 const error = (state: string = "", action: Action): string => {
   switch (action.type) {
-    case "LOAD_PAINTING_REQUEST":
-    case "SAVE_PAINTING_REQUEST":
+    case "LOAD_DRAWING_REQUEST":
+    case "SAVE_DRAWING_REQUEST":
       return "";
-    case "LOAD_PAINTING_ERROR":
-    case "SAVE_PAINTING_ERROR":
+    case "LOAD_DRAWING_ERROR":
+    case "SAVE_DRAWING_ERROR":
       return action.error;
     default:
       return state;
@@ -50,14 +59,16 @@ const error = (state: string = "", action: Action): string => {
 };
 
 export type State = {
-  method: string;
+  method: PaintKind;
+  drawing: Drawing;
   isSaving: boolean;
   isLoading: boolean;
   error: string;
 };
 
 export const initialState: State = {
-  method: "free",
+  method: PaintKind.Freehand,
+  drawing: new Drawing(),
   isSaving: false,
   isLoading: false,
   error: ""
@@ -65,6 +76,7 @@ export const initialState: State = {
 
 export const rootReducer = combineReducers<State>({
   method,
+  drawing,
   isSaving,
   isLoading,
   error

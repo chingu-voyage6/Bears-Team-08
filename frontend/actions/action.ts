@@ -1,45 +1,30 @@
-import { PaintObjectKind } from "../shared/paintObject";
+import { PaintKind } from "../shared/paint";
+import { Drawing } from "../shared/drawing";
+import { Paint } from "../shared/paint";
 
 type Req<Kind> = { request: Kind };
 type Res<Kind> = { response: Kind };
 type Err = { error: string };
 
-type ThunkAction<ReqKind, ResKind, ErrKind, _Req, _Res> =
+export type ThunkAction<ReqKind, ResKind, ErrKind, _Req, _Res> =
   | ({ type: ReqKind } & Req<_Req>)
   | ({ type: ResKind } & Req<_Req> & Res<_Res>)
   | ({ type: ErrKind } & Req<_Req> & Err);
 
-export type Painting = { painting: any };
+export type ChangePaintMethod = {
+  type: "CHANGE_PAINT_METHOD";
+  method: PaintKind;
+};
 
-export type LoadPainting = ThunkAction<
-  "LOAD_PAINTING_REQUEST",
-  "LOAD_PAINTING_SUCCESS",
-  "LOAD_PAINTING_ERROR",
-  {},
-  Painting
->;
-
-export type SavePainting = ThunkAction<
-  "SAVE_PAINTING_REQUEST",
-  "SAVE_PAINTING_SUCCESS",
-  "SAVE_PAINTING_ERROR",
-  Painting,
-  {}
->;
-
-export type AddPaintObject = ThunkAction<
-  "ADD_PAINT_OBJECT_REQUEST",
-  "ADD_PAINT_OBJECT_SUCCESS",
-  "ADD_PAINT_OBJECT_ERROR",
+export type Undo = ThunkAction<
+  "UNDO_REQUEST",
+  "UNDO_SUCCESS",
+  "UNDO_ERROR",
   {},
   {}
 >;
 
-export type Undo = { type: "UNDO" };
-
-export type Redo = { type: "REDO" };
-
-export type RedoLastPaint = ThunkAction<
+export type Redo = ThunkAction<
   "REDO_REQUEST",
   "REDO_SUCCESS",
   "REDO_ERROR",
@@ -47,18 +32,59 @@ export type RedoLastPaint = ThunkAction<
   {}
 >;
 
-export type ChangePaintMethod = {
-  type: "CHANGE_PAINT_METHOD";
-  method: PaintObjectKind;
-};
+export type Paint = { paint: Paint };
+
+export type AddPaint = ThunkAction<
+  "ADD_PAINT_REQUEST",
+  "ADD_PAINT_SUCCESS",
+  "ADD_PAINT_ERROR",
+  {},
+  {}
+>;
+
+export type UpdatePaint = ThunkAction<
+  "UPDATE_PAINT_REQUEST",
+  "UPDATE_PAINT_SUCCESS",
+  "UPDATE_PAINT_ERROR",
+  {},
+  {}
+>;
+
+export type DeletePaint = ThunkAction<
+  "DELETE_PAINT_REQUEST",
+  "DELETE_PAINT_SUCCESS",
+  "DELETE_PAINT_ERROR",
+  {},
+  {}
+>;
+
+export type Drawing = { drawing: Drawing };
+
+export type LoadDrawing = ThunkAction<
+  "LOAD_DRAWING_REQUEST",
+  "LOAD_DRAWING_SUCCESS",
+  "LOAD_DRAWING_ERROR",
+  {},
+  Drawing
+>;
+
+export type SaveDrawing = ThunkAction<
+  "SAVE_DRAWING_REQUEST",
+  "SAVE_DRAWING_SUCCESS",
+  "SAVE_DRAWING_ERROR",
+  Drawing,
+  {}
+>;
 
 export type Action =
-  | AddPaintObject
   | ChangePaintMethod
-  | LoadPainting
   | Redo
-  | SavePainting
-  | Undo;
+  | Undo
+  | AddPaint
+  | UpdatePaint
+  | DeletePaint
+  | LoadDrawing
+  | SaveDrawing;
 
 type ActionKind = Action["type"];
 

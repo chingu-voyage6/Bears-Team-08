@@ -1,14 +1,13 @@
 import { Point } from "../../shared/point";
 
 import {
-  Erase,
-  Freehand,
-  Image,
-  Line,
-  PaintObject,
-  PaintObjectKind,
-  Drawable
-} from "./paintObject";
+  ErasePaint,
+  FreehandPaint,
+  ImagePaint,
+  LinePaint,
+  Paint,
+  PaintKind
+} from "../../shared/paint";
 
 enum State {
   Init,
@@ -20,18 +19,18 @@ interface PadProps {
   canvas: HTMLCanvasElement;
   state: State;
   seq: number;
-  history: Array<PaintObject>;
+  history: Array<Paint>;
 }
 
 export class Pad {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private method: PaintObjectKind;
+  private method: PaintKind;
   private state: State;
-  private history: PaintObject[];
+  private history: Paint[];
   private seq: number;
 
-  public static fromHistory(canvas: HTMLCanvasElement, history: PaintObject[]) {
+  public static fromHistory(canvas: HTMLCanvasElement, history: Paint[]) {
     return new Pad({
       canvas,
       state: State.NotEditing,
@@ -53,7 +52,7 @@ export class Pad {
     this.canvas = props.canvas;
     this.state = props.state;
     this.context = props.canvas.getContext("2d", { alpha: false });
-    this.method = PaintObjectKind.Freehand;
+    this.method = PaintKind.Freehand;
     this.history = props.history;
     this.seq = props.seq;
 
@@ -76,11 +75,11 @@ export class Pad {
     this.canvas.addEventListener("touchcancel", this.cancel, false);
   }
 
-  public get paintMethod(): PaintObjectKind {
+  public get paintMethod(): PaintKind {
     return this.method;
   }
 
-  public set paintMethod(method: PaintObjectKind) {
+  public set paintMethod(method: PaintKind) {
     this.method = method;
   }
 
@@ -182,36 +181,36 @@ export class Pad {
   };
 
   private addPaint = (e: MouseEvent) => {
-    const paintObject = this.history[this.seq - 1];
-    switch (paintObject.kind) {
-      case PaintObjectKind.Freehand: {
-        const freehand = paintObject as Freehand;
+    const paint = this.history[this.seq - 1];
+    switch (paint.kind) {
+      case PaintKind.Freehand: {
+        const freehand = paint as FreehandPaint;
         const point = Point.fromMouseEvent(e);
         freehand.addPoint(point);
         break;
       }
-      case PaintObjectKind.Line:
-      case PaintObjectKind.Image:
-      case PaintObjectKind.Erase: {
+      case PaintKind.Line:
+      case PaintKind.Image:
+      case PaintKind.Erase: {
         break;
       }
     }
     this.redraw();
   };
 
-  private newPaintObject(): PaintObject {
+  private newPaintObject(): Paint {
     switch (this.method) {
-      case PaintObjectKind.Freehand: {
-        return new Freehand();
+      case PaintKind.Freehand: {
+        return new FreehandPaint();
       }
-      case PaintObjectKind.Line: {
-        return new Line();
+      case PaintKind.Line: {
+        return new LinePaint();
       }
-      case PaintObjectKind.Image: {
-        return new Image();
+      case PaintKind.Image: {
+        return new ImagePaint();
       }
-      case PaintObjectKind.Erase: {
-        return new Erase();
+      case PaintKind.Erase: {
+        return new ErasePaint();
       }
     }
   }

@@ -1,15 +1,26 @@
 import * as React from "react";
 import { findDOMNode } from "react-dom";
-
-import * as Styles from "./drawingBoard.module.css";
+import * as Redux from "redux";
 import { connect } from "react-redux";
 
+import * as Styles from "./drawingBoard.module.css";
+import { State } from "../../reducers";
+import { Action, redo, undo } from "../../actions";
+import { compose } from "../../utils";
+
 import { Pad } from "./pad";
+import { PaintKind } from "../../shared/paint";
+import { Drawing } from "../../shared/drawing";
 
-export interface Props {}
-interface State {}
+export type ConnectedState = {
+  method: PaintKind;
+  drawing: Drawing;
+};
+export type ConnectedDispatch = {};
 
-class _DrawingBoard extends React.Component<Props, State> {
+export type Props = ConnectedState & ConnectedDispatch;
+
+class _DrawingBoard extends React.Component<Props> {
   private pad: Pad;
 
   public componentDidMount() {
@@ -23,15 +34,20 @@ class _DrawingBoard extends React.Component<Props, State> {
     this.pad.removeEventListeners();
   }
 
-  public componentDidUpdate() {
-    /* this.pad.paintMethod(this.props.method) */
-    return false;
-  }
-
   public render() {
     console.debug("rendering drawing board");
     return <canvas className={Styles.Board} />;
   }
 }
 
-export const DrawingBoard = connect()(_DrawingBoard);
+const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
+  method: state.method,
+  drawing: state.drawing
+});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({});
+
+export const DrawingBoard = compose(
+  _DrawingBoard,
+  connect(mapStateToProps, mapDispatchToProps)
+);
