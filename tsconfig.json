@@ -9,7 +9,7 @@
     "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "frontend"
+    "rootDir": "src"
   },
   "exclude": [
     "node_modules",
@@ -18,6 +18,6 @@
     "acceptance-tests",
     "webpack",
     "jest",
-    "frontend/setupTests.ts"
+    "src/frontend/setupTests.ts"
   ]
 }

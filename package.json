@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start-server": "nodemon --ext ts --watch server --watch .env server/index.ts",
+    "start-server": "nodemon --ext ts --watch server --watch .env src/server/index.ts",
     "start-client": "node scripts/start.js",
     "prod": "npm run build && PORT=3000 NODE_ENV=production npm run start-server",
     "build": "node scripts/build.js",
@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
+    "@types/dotenv": "^4.0.3",
     "@types/express": "^4.16.0",
     "@types/jest": "^23.0.0",
     "@types/jsonwebtoken": "^7.2.7",
