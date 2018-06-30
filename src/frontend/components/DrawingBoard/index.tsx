@@ -9,8 +9,8 @@ import { Action, addPaint, updatePaint } from "../../actions";
 import { compose } from "../../utils";
 
 import { Pad } from "./pad";
-import { Paint, PaintKind } from "../../shared/paint";
-import { Drawing } from "../../shared/drawing";
+import { Paint, PaintKind } from "../../../shared/paint";
+import { Drawing } from "../../../shared/drawing";
 
 export type ConnectedState = {
   method: PaintKind;

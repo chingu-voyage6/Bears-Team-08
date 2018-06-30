@@ -6,6 +6,10 @@ import * as Config from "./config";
 import * as db from "./db";
 import { userRouter } from "./user";
 
+import { Drawing } from "../shared/drawing";
+
+const x = new Drawing({});
+
 const app = Express();
 app.use(bodyParser.urlencoded({ extended: true })); // allow data from a post
 app.use(bodyParser.json());
