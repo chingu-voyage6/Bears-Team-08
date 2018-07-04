@@ -1,22 +1,23 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build/dist",
-    "module": "esnext",
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
     "allowJs": true,
+    "baseUrl": ".",
     "jsx": "react",
+    "lib": ["es6", "dom"],
+    "module": "esnext",
     "moduleResolution": "node",
-    "rootDir": "src"
+    "outDir": "build/dist",
+    "rootDir": "src",
+    "sourceMap": true,
+    "target": "es5"
   },
   "exclude": [
     "node_modules",
     "build",
     "scripts",
-    "acceptance-tests",
+    "config",
     "webpack",
+    "acceptance-tests",
     "jest",
     "src/frontend/setupTests.ts"
   ]
