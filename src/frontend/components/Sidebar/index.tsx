@@ -6,8 +6,8 @@ import * as Styles from "./sidebar.module.css";
 import { Button } from "../Button";
 import { State } from "../../reducers";
 import { Action, redo, undo, changePaintMethod } from "../../actions";
-import { PaintKind } from "../../../shared/paint";
 import { compose } from "../../utils";
+import { PaintKind } from "@shared/paint";
 
 type ConnectedState = {
   method: PaintKind;

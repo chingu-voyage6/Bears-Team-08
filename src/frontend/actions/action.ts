@@ -1,5 +1,5 @@
-import { Paint, PaintKind } from "../../shared/paint";
-import { Drawing } from "../../shared/drawing";
+import { Paint, PaintKind } from "@shared/paint";
+import { Drawing } from "@shared/drawing";
 
 type Req<T> = { request: T };
 type Res<T> = { response: T };

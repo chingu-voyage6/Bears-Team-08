@@ -8,7 +8,7 @@ import { Navbar } from "../Navbar";
 import { DrawingBoard } from "../DrawingBoard";
 import { Action } from "../../actions";
 import { State } from "../../reducers";
-import { Drawing } from "../../../shared/drawing";
+import { Drawing } from "@shared/drawing";
 import { compose } from "../../utils";
 import { Explorer } from "../Explorer";
 

@@ -1,8 +1,8 @@
 import { combineReducers, Reducer } from "redux";
 
 import { Action } from "../actions";
-import { PaintKind } from "../../shared/paint";
-import { Drawing } from "../../shared/drawing";
+import { PaintKind } from "@shared/paint";
+import { Drawing } from "@shared/drawing";
 
 const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   switch (action.type) {

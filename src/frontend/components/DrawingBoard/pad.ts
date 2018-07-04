@@ -1,4 +1,4 @@
-import { Point } from "../../../shared/point";
+import { Point } from "@shared/point";
 
 import {
   PaintImage,
@@ -7,7 +7,7 @@ import {
   PaintErase,
   Paint,
   PaintKind
-} from "../../../shared/paint";
+} from "@shared/paint";
 
 enum State {
   Init,

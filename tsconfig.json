@@ -9,7 +9,10 @@
     "outDir": "build/dist",
     "rootDir": "src",
     "sourceMap": true,
-    "target": "es5"
+    "target": "es5",
+    "paths": {
+      "@shared/*": ["src/shared/*"]
+    }
   },
   "exclude": [
     "node_modules",

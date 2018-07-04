@@ -1,5 +1,5 @@
-import { Drawing } from "../../shared/drawing";
-import { Paint } from "../../shared/paint";
+import { Drawing } from "@shared/drawing";
+import { Paint } from "@shared/paint";
 import {
   NewDrawingReq,
   NewDrawingRes,

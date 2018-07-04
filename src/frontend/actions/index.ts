@@ -31,7 +31,7 @@ import {
   dispatcher
 } from "./action";
 
-import { PaintKind } from "../../shared/paint";
+import { PaintKind } from "@shared/paint";
 
 export {
   Action,
