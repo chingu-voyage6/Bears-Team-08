@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start-server": "nodemon --ext ts --watch server --watch .env src/server/index.ts",
-    "start-client": "node scripts/start.js",
+    "start-client": "node scripts/start-client.js",
     "prod": "npm run build && PORT=3000 NODE_ENV=production npm run start-server",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
