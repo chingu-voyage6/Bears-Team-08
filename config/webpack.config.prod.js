@@ -10,12 +10,13 @@ const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const autoprefixer = require("autoprefixer");
-const getClientEnvironment = require("./env");
 const path = require("path");
 const webpack = require("webpack");
 
+const { getClientEnvironment } = require("./env");
 const paths = require("./paths");
 
+const env = getClientEnvironment(publicUrl);
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
 const publicPath = paths.servedPath;
@@ -29,7 +30,6 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== "false";
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
 const publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl);
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
@@ -62,7 +62,7 @@ module.exports = {
   entry: [require.resolve("./polyfills"), paths.appFrontendIndexTs],
   output: {
     // The build folder.
-    path: paths.appBuild,
+    path: paths.appFrontendBuild,
     // Generated JS file names (with nested folders).
     // There will be one main bundle, and one file per asynchronous chunk.
     // We don't currently advertise code splitting but Webpack supports it.

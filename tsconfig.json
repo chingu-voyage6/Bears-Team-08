@@ -6,7 +6,7 @@
     "lib": ["es6", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
-    "outDir": "build/dist",
+    "outDir": "build",
     "rootDir": "src",
     "sourceMap": true,
     "target": "es5",

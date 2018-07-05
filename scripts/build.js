@@ -11,9 +11,6 @@ process.on("unhandledRejection", err => {
   throw err;
 });
 
-// Ensure environment variables are read.
-require("../config/env");
-
 const path = require("path");
 const chalk = require("chalk");
 const fs = require("fs-extra");
@@ -25,6 +22,10 @@ const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 const printHostingInstructions = require("react-dev-utils/printHostingInstructions");
 const FileSizeReporter = require("react-dev-utils/FileSizeReporter");
 const printBuildError = require("react-dev-utils/printBuildError");
+
+const { getClientEnvironment } = require("../config/env");
+
+const env = getClientEnvironment();
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -42,11 +43,11 @@ if (!checkRequiredFiles([paths.appHtml, paths.appFrontendIndexTs])) {
 
 // First, read the current file sizes in build directory.
 // This lets us display how much they changed later.
-measureFileSizesBeforeBuild(paths.appBuild)
+measureFileSizesBeforeBuild(paths.appFrontendBuild)
   .then(previousFileSizes => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appBuild);
+    fs.emptyDirSync(paths.appFrontendBuild);
     // Merge with the public folder
     copyPublicFolder();
     // Start the webpack build
@@ -75,7 +76,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
       printFileSizesAfterBuild(
         stats,
         previousFileSizes,
-        paths.appBuild,
+        paths.appFrontendBuild,
         WARN_AFTER_BUNDLE_GZIP_SIZE,
         WARN_AFTER_CHUNK_GZIP_SIZE
       );
@@ -84,7 +85,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
       const appPackage = require(paths.appPackageJson);
       const publicUrl = paths.publicUrl;
       const publicPath = config.output.publicPath;
-      const buildFolder = path.relative(process.cwd(), paths.appBuild);
+      const buildFolder = path.relative(process.cwd(), paths.appFrontendBuild);
       printHostingInstructions(
         appPackage,
         publicUrl,
@@ -143,7 +144,7 @@ function build(previousFileSizes) {
 }
 
 function copyPublicFolder() {
-  fs.copySync(paths.appPublic, paths.appBuild, {
+  fs.copySync(paths.appPublic, path.join(paths.appFrontendBuild), {
     dereference: true,
     filter: file => file !== paths.appHtml
   });
