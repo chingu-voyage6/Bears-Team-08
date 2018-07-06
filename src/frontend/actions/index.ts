@@ -29,7 +29,7 @@ import {
   asReq,
   asRes,
   dispatcher
-} from "./action";
+} from "../actions/action";
 
 import { PaintKind } from "@shared/paint";
 
@@ -51,7 +51,7 @@ export {
   SaveDrawingRes,
   UndoReq,
   UndoRes
-} from "./action";
+};
 
 export const changePaintMethod = (method: PaintKind): Action => ({
   type: "CHANGE_PAINT_METHOD",

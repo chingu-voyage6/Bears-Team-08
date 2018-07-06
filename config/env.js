@@ -61,7 +61,6 @@ process.env.NODE_PATH = (process.env.NODE_PATH || "")
 const REACT_APP = /^REACT_APP_/i;
 
 const defaultEnvironment = {
-  HOST: process.env.HOST || "0.0.0.0",
   NODE_ENV: process.env.NODE_ENV || "development",
   PUBLIC_URL: process.env.PUBLIC_URL || paths.publicUrl,
   PROTOCOL: process.env.PROTOCOL || "http"

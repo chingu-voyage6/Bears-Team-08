@@ -36,5 +36,7 @@ just add slide thingy to side bar
 
 # Bugs
 
-- [ ] No valid rules have been specified for TypeScript files
+- [ ] "No valid rules have been specified for TypeScript files" reported by webpack
   - This is probably related to tslint
+- [ ] @types files for react are bugging out
+  - quick fix for now is to add `"skipLibCheck": true,` to tsconfig.json
