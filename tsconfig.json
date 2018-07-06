@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "jsx": "react",
     "lib": ["es6", "dom"],
-    "module": "esnext",
+    "module": "es6",
     "moduleResolution": "node",
     "outDir": "build",
     "rootDir": "src",

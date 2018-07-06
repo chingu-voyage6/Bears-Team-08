@@ -3,7 +3,8 @@ import * as Fs from "fs";
 import * as Url from "url";
 
 const appDirectory = Fs.realpathSync(process.cwd());
-const resolveApp = relativePath => Path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath: string) =>
+  Path.resolve(appDirectory, relativePath);
 
 const env = process.env;
 export const isProduction = env.NODE_ENV === "production";
@@ -13,7 +14,7 @@ export const baseRoute = "/api";
 export const staticFiles = resolveApp("build");
 export const indexFile = resolveApp("build/index.html");
 
-const getSecretKey = key => {
+const getSecretKey = (key: string) => {
   if (isProduction && !key) {
     if (!key) {
       throw new Error("Secret key needs to be set for production");

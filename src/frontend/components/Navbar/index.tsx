@@ -23,7 +23,10 @@ class _Navbar extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps): ConnectedDispatch => ({});
+const mapStateToProps = (
+  state: State,
+  ownProps: Props
+): ConnectedDispatch => ({});
 const mapDispatchToProps = (
   dispatch: Redux.Dispatch<Action>
 ): ConnectedDispatch => ({});

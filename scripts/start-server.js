@@ -12,6 +12,8 @@ process.on("unhandledRejection", err => {
 });
 
 const fs = require("fs");
+// const childProcess = require("child_process");
+const MemoryFS = require("memory-fs");
 const chalk = require("chalk");
 const webpack = require("webpack");
 const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
@@ -47,9 +49,10 @@ if (!env.HOST) {
 const startServer = async () => {
   const port = await choosePort(env.HOST, env.SERVER_APP_PORT);
   const compiler = webpack(config);
+  const mem = new MemoryFS();
+  // compiler.outputFileSystem = mem;
   return new Promise((resolve, reject) => {
     const watching = compiler.watch({}, (err, stats) => {
-      // console.log("stats", stats.toJson().assets);
       if (err) {
         return reject(err);
       }
@@ -77,6 +80,10 @@ const startServer = async () => {
         );
         return reject(new Error(messages.warnings.join("\n\n")));
       }
+
+      // console.log(mem.readdirSync("."));
+      // console.log("stats", stats.toJson().assets[0]);
+      // const content = mem.readFileSync("build/server/server.js");
 
       return resolve({
         stats,

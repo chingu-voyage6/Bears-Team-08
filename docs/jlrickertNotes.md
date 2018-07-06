@@ -33,3 +33,8 @@ etc   |
 ## Mobile mockup
 
 just add slide thingy to side bar
+
+# Bugs
+
+- [ ] No valid rules have been specified for TypeScript files
+  - This is probably related to tslint

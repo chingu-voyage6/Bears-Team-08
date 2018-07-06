@@ -2,9 +2,7 @@
 
 const CaseSensitivePathsPlugin = require("case-sensitive-paths-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const WatchMissingNodeModulesPlugin = require("react-dev-utils/WatchMissingNodeModulesPlugin");
 const path = require("path");
 const webpack = require("webpack");
 
@@ -35,15 +33,7 @@ module.exports = {
     ),
     // modulesDirectories: [paths.appNodeModules],
     extensions: [".js", ".json", ".ts"],
-    plugins: [
-      // Prevents users from importing files from outside of src/ (or node_modules/).
-      // This often causes confusion because we only process files within src/ with babel.
-      // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
-      // please link the files into your node_modules/ and let module-resolution kick in.
-      // Make sure your source files are compiled, as they will not be processed in any way.
-      new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
-      new TsconfigPathsPlugin({ configFile: paths.appTsServerConfig })
-    ]
+    plugins: [new TsconfigPathsPlugin({ configFile: paths.appTsServerConfig })]
   },
   module: {
     rules: [
@@ -154,7 +144,6 @@ module.exports = {
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin(env.stringified),
     new CaseSensitivePathsPlugin(),
-    new WatchMissingNodeModulesPlugin(paths.appNodeModules),
     new ForkTsCheckerWebpackPlugin({
       async: false,
       watch: paths.appSrc,
