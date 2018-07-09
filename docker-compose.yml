@@ -2,13 +2,19 @@ version: '3'
 services:
   db:
     image: mongo
-  web:
+  client:
       build: .
-      command: npm run start-server && npm run start-client
+      command: /bin/bash -c "npm run start-client"
       volumes:
             - .:/usr/src/app
       ports:
             - "3000:3000"
+  server:
+      build: .
+      command: /bin/bash -c "npm run start-server"
+      volumes:
+            - .:/usr/src/app
+      ports:
             - "3001:3001"
       depends_on:
             - db
