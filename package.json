@@ -78,7 +78,7 @@
     "@types/react-redux": "^6.0.2",
     "@types/redux": "^3.6.0"
   },
-  "proxy": "http://localhost:3001",
+  "proxy": "http://server:3001",
   "nodemonConfig": {
     "ignore": [
       "node_modules"
