@@ -44,6 +44,8 @@ module.exports = {
   appFrontendBuild: resolveApp("build/frontend"),
   appServerBuild: resolveApp("build/server"),
   appPublic: resolveApp("src/public"),
+  appFavicon: resolveApp("src/public/favicon.ico"),
+  appManifest: resolveApp("src/public/manifest.json"),
   appHtml: resolveApp("src/public/index.html"),
   appFrontendIndexTs: resolveApp("src/frontend/index.tsx"),
   appServerIndexTs: resolveApp("src/server/index.ts"),

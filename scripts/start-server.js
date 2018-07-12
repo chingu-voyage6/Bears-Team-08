@@ -11,48 +11,47 @@ process.on("unhandledRejection", err => {
   throw err;
 });
 
-const fs = require("fs");
-// const childProcess = require("child_process");
-const MemoryFS = require("memory-fs");
-const chalk = require("chalk");
-const webpack = require("webpack");
+const nodemon = require("nodemon");
+const Chalk = require("chalk");
+const Path = require("path");
 const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
-const {
-  choosePort,
-  prepareUrls
-} = require("react-dev-utils/WebpackDevServerUtils");
+const webpack = require("webpack");
+const clearConsole = require("react-dev-utils/clearConsole");
 
 const config = require("../config/webpack.config.server");
 const { getServerEnvironment } = require("../config/env");
 const paths = require("../config/paths");
 
-const useYarn = fs.existsSync(paths.yarnLockFile);
 const isInteractive = process.stdout.isTTY;
 
-const env = getServerEnvironment();
+const start = async () => {
+  const env = getServerEnvironment();
 
-if (!env.HOST) {
-  console.log(
-    chalk.cyan(
-      `Attempting to bind to HOST environment variable: ${chalk.yellow(
-        chalk.bold(env.HOST)
-      )}`
-    )
-  );
-  console.log(
-    `If this was unintentional, check that you haven't mistakenly set it in your shell.`
-  );
-  console.log(`Learn more here: ${chalk.yellow("http://bit.ly/2mwWSwH")}`);
-  console.log();
-}
+  if (!env.HOST) {
+    console.log(
+      Chalk.cyan(
+        `Attempting to bind to HOST environment variable: ${Chalk.yellow(
+          Chalk.bold(env.HOST)
+        )}`
+      )
+    );
+    console.log(
+      `If this was unintentional, check that you haven't mistakenly set it in your shell.`
+    );
+    console.log(`Learn more here: ${Chalk.yellow("http://bit.ly/2mwWSwH")}`);
+    console.log();
+  }
 
-const startServer = async () => {
-  const port = await choosePort(env.HOST, env.SERVER_APP_PORT);
+  const { filename, path } = config.output;
+  const indexJs = Path.join(path, filename);
+
   const compiler = webpack(config);
-  const mem = new MemoryFS();
-  // compiler.outputFileSystem = mem;
+
   return new Promise((resolve, reject) => {
-    const watching = compiler.watch({}, (err, stats) => {
+    let stopServer = () => {};
+    nodemon({ script: indexJs });
+
+    const watching = compiler.watch({}, async (err, stats) => {
       if (err) {
         return reject(err);
       }
@@ -73,7 +72,7 @@ const startServer = async () => {
         messages.warnings.length
       ) {
         console.log(
-          chalk.yellow(
+          Chalk.yellow(
             "\nTreating warnings as errors because process.env.CI = true.\n" +
               "Most CI servers set it automatically.\n"
           )
@@ -81,23 +80,26 @@ const startServer = async () => {
         return reject(new Error(messages.warnings.join("\n\n")));
       }
 
-      // console.log(mem.readdirSync("."));
-      // console.log("stats", stats.toJson().assets[0]);
-      // const content = mem.readFileSync("build/server/server.js");
+      nodemon.emit("restart");
 
-      return resolve({
+      if (isInteractive) {
+        // clearConsole();
+      }
+
+      return {
         stats,
         warnings: messages.warnings
-      });
+      };
     });
 
     ["SIGINT", "SIGTERM"].forEach(sig => {
       process.on(sig, () => {
         watching.close();
+        nodemon.emit("quit");
         process.exit();
       });
     });
   });
 };
 
-startServer();
+start();
