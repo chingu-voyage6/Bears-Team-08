@@ -73,6 +73,7 @@ const getClientEnvironment = publicUrl => {
       env[key] = process.env[key];
       return env;
     }, defaultEnvironment);
+  raw.SERVER_APP_PORT = parseInt(raw.SERVER_PORT, 10) || 3010;
   raw.REACT_APP_PORT = parseInt(raw.REACT_APP_PORT, 10) || 3000;
   if (publicUrl) {
     raw.PUBLIC_URL = publicUrl;
@@ -98,7 +99,7 @@ const getServerEnvironment = () => {
       env[key] = process.env[key];
       return env;
     }, defaultEnvironment);
-  raw.SERVER_APP_PORT = parseInt(raw.REACT_APP_PORT, 10) || 3001;
+  raw.SERVER_APP_PORT = parseInt(raw.SERVER_PORT, 10) || 3010;
 
   const stringified = {
     "process.env": Object.keys(raw).reduce((env, key) => {

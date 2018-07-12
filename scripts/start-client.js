@@ -28,34 +28,34 @@ const paths = require("../config/paths");
 const config = require("../config/webpack.config.dev");
 const { getClientEnvironment } = require("../config/env");
 
-const useYarn = fs.existsSync(paths.yarnLockFile);
-const isInteractive = process.stdout.isTTY;
+// const useYarn = fs.existsSync(paths.yarnLockFile);
+// const isInteractive = process.stdout.isTTY;
 
-const env = getClientEnvironment(paths.publicUrl);
+// const env = getClientEnvironment(paths.publicUrl);
 
-if (env.HOST) {
-  console.log(
-    chalk.cyan(
-      `Attempting to bind to HOST environment variable: ${chalk.yellow(
-        chalk.bold(env.HOST)
-      )}`
-    )
-  );
-  console.log(
-    `If this was unintentional, check that you haven't mistakenly set it in your shell.`
-  );
-  console.log(`Learn more here: ${chalk.yellow("http://bit.ly/2mwWSwH")}`);
-  console.log();
-}
+// if (env.HOST) {
+//   console.log(
+//     chalk.cyan(
+//       `Attempting to bind to HOST environment variable: ${chalk.yellow(
+//         chalk.bold(env.HOST)
+//       )}`
+//     )
+//   );
+//   console.log(
+//     `If this was unintentional, check that you haven't mistakenly set it in your shell.`
+//   );
+//   console.log(`Learn more here: ${chalk.yellow("http://bit.ly/2mwWSwH")}`);
+//   console.log();
+// }
 
 const startDevServer = async () => {
   // We attempt to use the default port but if it is busy, we offer the user to
   // run on a different port. `choosePort()` Promise resolves to the next free port.
-  const defaultPort = env.REACT_APP_PORT;
-  const port = await choosePort(env.HOST, defaultPort);
-  if (port === null) {
-    return Promise.reject("Unable to find a port");
-  }
+  // const defaultPort = env.REACT_APP_PORT;
+  // const port = await choosePort(env.HOST, defaultPort);
+  // if (port === null) {
+  //   return Promise.reject("Unable to find a port");
+  // }
 
   const devServer = serve({ config });
   devServer.then(server => {
@@ -83,7 +83,7 @@ const startDevServer = async () => {
   //   openBrowser(urls.localUrlForBrowser);
   // });
 
-  [("SIGINT", "SIGTERM")].forEach(sig => {
+  ["SIGINT", "SIGTERM"].forEach(sig => {
     process.on(sig, async () => {
       await devServer.then(server => close());
       process.exit();

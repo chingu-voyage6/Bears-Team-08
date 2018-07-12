@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "node scripts/start.js",
     "start-server-old": "nodemon --ext ts --watch server --watch .env src/server/index.ts",
     "start-server": "node scripts/start-server.js",
     "start-client": "node scripts/start-client.js",
@@ -80,10 +81,9 @@
     "webpack": "^4.15.1",
     "webpack-dev-server": "^3.1.4",
     "webpack-manifest-plugin": "^2.0.3",
-    "webpack-serve": "^1.0.4",
+    "webpack-serve": "^2.0.2",
     "whatwg-fetch": "^2.0.4"
   },
-  "proxy": "http://localhost:3001",
   "nodemonConfig": {
     "ignore": [
       "node_modules"
