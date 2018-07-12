@@ -50,7 +50,7 @@ module.exports = {
     // require.resolve('webpack/hot/dev-server'),
     require.resolve("react-dev-utils/webpackHotDevClient"),
     // Finally, this is your app's code:
-    paths.appFrontendIndexTs
+    paths.appClientIndexTs
     // We include the app code last so that if there is a runtime error during
     // initialization, it doesn't blow up the WebpackDevServer client, and
     // changing JS code would still trigger a refresh.
@@ -102,9 +102,7 @@ module.exports = {
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       "react-native": "react-native-web"
     },
-    plugins: [
-      new TsconfigPathsPlugin({ configFile: paths.appTsFrontendConfig })
-    ]
+    plugins: [new TsconfigPathsPlugin({ configFile: paths.appTsClientConfig })]
   },
   module: {
     strictExportPresence: true,
@@ -154,7 +152,7 @@ module.exports = {
                 options: {
                   // disable type checker - we will use it in fork plugin
                   transpileOnly: true,
-                  configFile: paths.appTsFrontendConfig
+                  configFile: paths.appTsClientConfig
                 }
               }
             ]
@@ -251,7 +249,7 @@ module.exports = {
     new ForkTsCheckerWebpackPlugin({
       async: false,
       watch: paths.appSrc,
-      tsconfig: paths.appTsFrontendConfig,
+      tsconfig: paths.appTsClientConfig,
       tslint: paths.appTsLint
     })
   ],

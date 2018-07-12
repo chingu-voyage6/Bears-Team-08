@@ -61,10 +61,10 @@ module.exports = {
   // You can exclude the *.map files from the build during deployment.
   devtool: shouldUseSourceMap ? "source-map" : false,
   // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve("./polyfills"), paths.appFrontendIndexTs],
+  entry: [require.resolve("./polyfills"), paths.appClientIndexTs],
   output: {
     // The build folder.
-    path: paths.appFrontendBuild,
+    path: paths.appClientBuild,
     // Generated JS file names (with nested folders).
     // There will be one main bundle, and one file per asynchronous chunk.
     // We don't currently advertise code splitting but Webpack supports it.
@@ -110,7 +110,7 @@ module.exports = {
     },
     plugins: [
       new TsconfigPathsPlugin({
-        configFile: paths.appTsFrontendConfig
+        configFile: paths.appTsClientConfig
       })
     ]
   },
@@ -159,7 +159,7 @@ module.exports = {
                 options: {
                   // disable type checker - we will use it in fork plugin
                   transpileOnly: true,
-                  configFile: paths.appTsFrontendConfig
+                  configFile: paths.appTsClientConfig
                 }
               }
             ]

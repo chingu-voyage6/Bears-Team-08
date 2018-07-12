@@ -9,10 +9,10 @@ const resolveApp = (relativePath: string) =>
 const env = process.env;
 export const isProduction = env.NODE_ENV === "production";
 export const isTest: boolean = env.NODE_ENV === "test";
-export const port = env.PORT || 3001;
+export const port = env.PORT || 8090;
 export const baseRoute = "/api";
-export const staticFiles = resolveApp("build");
-export const indexFile = resolveApp("build/index.html");
+export const staticFiles = resolveApp("build/client");
+export const indexFile = resolveApp("build/client/index.html");
 
 const getSecretKey = (key: string) => {
   if (isProduction && !key) {

@@ -147,7 +147,7 @@ module.exports = {
     new ForkTsCheckerWebpackPlugin({
       async: false,
       watch: paths.appSrc,
-      tsconfig: paths.appTsFrontendConfig,
+      tsconfig: paths.appTsServerConfig,
       tslint: paths.appTsLint
     })
   ],

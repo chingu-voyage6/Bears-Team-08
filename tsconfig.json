@@ -23,6 +23,6 @@
     "webpack",
     "acceptance-tests",
     "jest",
-    "src/frontend/setupTests.ts"
+    "src/client/setupTests.ts"
   ]
 }

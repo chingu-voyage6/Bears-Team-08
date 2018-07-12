@@ -1,126 +1,24 @@
 "use strict";
 
+const chalk = require("chalk");
+const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
+const fs = require("fs-extra");
+const path = require("path");
+const webpack = require("webpack");
+
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 
-// Makes the script crash on unhandled rejections instead of silently
-// ignoring them. In the future, promise rejections that are not handled will
-// terminate the Node.js process with a non-zero exit code.
-process.on("unhandledRejection", err => {
-  throw err;
-});
-
-const path = require("path");
-const chalk = require("chalk");
-const fs = require("fs-extra");
-const webpack = require("webpack");
 const clientConfig = require("../config/webpack.config.prod");
 const serverConfig = require("../config/webpack.config.server");
+const { getClientEnvironment, getServerEnvironment } = require("../config/env");
 const paths = require("../config/paths");
-const checkRequiredFiles = require("react-dev-utils/checkRequiredFiles");
-const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
-const printHostingInstructions = require("react-dev-utils/printHostingInstructions");
-const FileSizeReporter = require("react-dev-utils/FileSizeReporter");
-const printBuildError = require("react-dev-utils/printBuildError");
 
-const { getClientEnvironment } = require("../config/env");
+const clientEnv = getClientEnvironment(paths.publicUrl);
 
-const env = getClientEnvironment();
-
-const measureFileSizesBeforeBuild =
-  FileSizeReporter.measureFileSizesBeforeBuild;
-const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
-const useYarn = fs.existsSync(paths.yarnLockFile);
-
-// These sizes are pretty large. We'll warn for bundles exceeding them.
-const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
-const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
-
-// Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appFrontendIndexTs])) {
-  process.exit(1);
-}
-
-async function build() {
-  // First, read the current file sizes in build directory.
-  // This lets us display how much they changed later.
-  measureFileSizesBeforeBuild(paths.appFrontendBuild)
-    .then(async previousFileSizes => {
-      // Remove all content but keep the directory so that
-      // if you're in it, you don't end up in Trash
-      fs.emptyDirSync(paths.appFrontendBuild);
-      // Merge with the public folder
-      copyPublicFolder();
-      return buildClient(previousFileSizes);
-      // Start the webpack build
-      // const res = await Promise.all([
-      //   buildClient(previousFileSizes),
-      //   buildServer()
-      // ]);
-      // return res[0];
-      // return {
-      //   clientRes: res[0],
-      //   serverRes: res[1]
-      // };
-    })
-    .then(
-      ({ stats, previousFileSizes, warnings }) => {
-        if (warnings.length) {
-          console.log(chalk.yellow("Compiled with warnings.\n"));
-          console.log(warnings.join("\n\n"));
-          console.log(
-            "\nSearch for the " +
-              chalk.underline(chalk.yellow("keywords")) +
-              " to learn more about each warning."
-          );
-          console.log(
-            "To ignore, add " +
-              chalk.cyan("// eslint-disable-next-line") +
-              " to the line before.\n"
-          );
-        } else {
-          console.log(chalk.green("Compiled successfully.\n"));
-        }
-
-        console.log("File sizes after gzip:\n");
-        printFileSizesAfterBuild(
-          stats,
-          previousFileSizes,
-          paths.appFrontendBuild,
-          WARN_AFTER_BUNDLE_GZIP_SIZE,
-          WARN_AFTER_CHUNK_GZIP_SIZE
-        );
-        console.log();
-
-        const appPackage = require(paths.appPackageJson);
-        const publicUrl = paths.publicUrl;
-        const publicPath = clientConfig.output.publicPath;
-        const buildFolder = path.relative(
-          process.cwd(),
-          paths.appFrontendBuild
-        );
-        printHostingInstructions(
-          appPackage,
-          publicUrl,
-          publicPath,
-          buildFolder,
-          useYarn
-        );
-      },
-      err => {
-        console.log(chalk.red("Failed to compile.\n"));
-        printBuildError(err);
-        process.exit(1);
-      }
-    );
-}
-
-// Create the production build and print the deployment instructions.
-function buildClient(previousFileSizes) {
-  console.log("Creating an optimized production build...");
-
-  let compiler = webpack(clientConfig);
+const buildWithConfig = (config, kind) => async () => {
+  const compiler = webpack(config);
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
@@ -149,58 +47,49 @@ function buildClient(previousFileSizes) {
         );
         return reject(new Error(messages.warnings.join("\n\n")));
       }
-      return resolve({
-        stats,
-        previousFileSizes,
-        warnings: messages.warnings
-      });
+      return resolve({ stats, warnings: messages.warnings, kind });
     });
   });
-}
+};
 
-function buildServer() {
-  const compiler = webpack(clientConfig);
-  return new Promise((resolve, reject) => {
-    compiler.run({}, (err, stats) => {
-      if (err) {
-        return reject(err);
-      }
-      const messages = formatWebpackMessages(stats.toJson({}, true));
-      if (messages.errors.length) {
-        // Only keep the first error. Others are often indicative
-        // of the same problem, but confuse the reader with noise.
-        if (messages.errors.length > 1) {
-          messages.errors.length = 1;
-        }
-        return reject(new Error(messages.errors.join("\n\n")));
-      }
-      if (
-        process.env.CI &&
-        (typeof process.env.CI !== "string" ||
-          process.env.CI.toLowerCase() !== "false") &&
-        messages.warnings.length
-      ) {
-        console.log(
-          chalk.yellow(
-            "\nTreating warnings as errors because process.env.CI = true.\n" +
-              "Most CI servers set it automatically.\n"
-          )
-        );
-        return reject(new Error(messages.warnings.join("\n\n")));
-      }
-      return resolve({
-        stats,
-        warnings: messages.warnings
-      });
-    });
-  });
-}
+const buildClient = buildWithConfig(clientConfig, "Client");
+const buildServer = buildWithConfig(
+  { ...serverConfig, mode: "production" },
+  "Server"
+);
 
-function copyPublicFolder() {
-  fs.copySync(paths.appPublic, path.join(paths.appFrontendBuild), {
+const printResults = ({ stats, warnings, kind }) => {
+  if (warnings.length) {
+    console.log(chalk.yellow(`Compiled ${kind} with warnings.\n`));
+    console.log(warnings.join("\n\n"));
+    console.log(
+      "\nSearch for the " +
+        chalk.underline(chalk.yellow("keywords")) +
+        " to learn more about each warning."
+    );
+    console.log(
+      "To ignore, add " +
+        chalk.cyan("// eslint-disable-next-line") +
+        " to the line before.\n"
+    );
+  } else {
+    console.log(chalk.green(`Compiled ${kind} successfully.\n`));
+  }
+};
+
+const build = async () => {
+  copyPublicFolder();
+  const results = await Promise.all([buildClient(), buildServer()]);
+  results.forEach(printResults);
+};
+
+const copyPublicFolder = () => {
+  fs.copySync(paths.appPublic, path.join(paths.appClientBuild), {
     dereference: true,
     filter: file => file !== paths.appHtml
   });
-}
+};
 
-build();
+build().catch(err => {
+  throw err;
+});
