@@ -30,6 +30,10 @@ etc   |
       |
 ```
 
+## Testing
+
+- Dispatching an action doesn't update test renderers
+
 ## Mobile mockup
 
 just add slide thingy to side bar

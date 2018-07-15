@@ -3,17 +3,17 @@ import * as Redux from "redux";
 import { connect } from "react-redux";
 
 import * as Styles from "./app.module.css";
-import { Sidebar } from "../Sidebar";
-import { Navbar } from "../Navbar";
-import { DrawingBoard } from "../DrawingBoard";
 import { Action } from "../../actions";
-import { State } from "../../reducers";
-import { Drawing } from "@shared/drawing";
-import { compose } from "../../utils";
+import { DrawingBoard } from "../DrawingBoard";
 import { Explorer } from "../Explorer";
+import { Navbar } from "../Navbar";
+import { Sidebar } from "../Sidebar";
+import { State } from "../../reducers";
+import { compose } from "../../utils";
+import { Drawing } from "@shared/drawing";
 
 export type ConnectedState = {
-  drawing: Drawing;
+  isDrawing: boolean;
 };
 
 export type ConnectedDispatch = {};
@@ -35,21 +35,21 @@ class _App extends React.Component<Props> {
   }
 
   componentDidUpdate() {
-    if (this.props.drawing) {
-      const id = this.props.drawing.id;
+    if (this.props.isDrawing) {
+      /* const id = this.props.drawing.id; */
     }
   }
 
   public render() {
-    const { drawing } = this.props;
+    const { isDrawing } = this.props;
     return (
       <div
         className={`${Styles.App} ${
-          drawing ? Styles.Drawing : Styles.Exploring
+          isDrawing ? Styles.Drawing : Styles.Exploring
         }`}
       >
         <Navbar />
-        {drawing ? (
+        {isDrawing ? (
           <>
             <Sidebar />
             <DrawingBoard />
@@ -63,7 +63,7 @@ class _App extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
-  drawing: state.drawing
+  isDrawing: state.isDrawing
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({});

@@ -65,14 +65,14 @@ export class Pad {
     this.canvas.addEventListener("mouseout", this.cancel, false);
 
     // Add touch event listeners to canvas element
-    this.canvas.addEventListener("touchstart", this.press, {
-      passive: false // TODO: https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
-    });
-    this.canvas.addEventListener("touchmove", this.drag, {
-      passive: false // TODO: same as above
-    });
-    this.canvas.addEventListener("touchend", this.release, false);
-    this.canvas.addEventListener("touchcancel", this.cancel, false);
+    // this.canvas.addEventListener("touchstart", this.press, {
+    //   passive: false // TODO: https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+    // });
+    // this.canvas.addEventListener("touchmove", this.drag, {
+    //   passive: false // TODO: same as above
+    // });
+    // this.canvas.addEventListener("touchend", this.release, false);
+    // this.canvas.addEventListener("touchcancel", this.cancel, false);
   }
 
   public get paintMethod(): PaintKind {
@@ -93,10 +93,10 @@ export class Pad {
     this.canvas.removeEventListener("mouseout", this.cancel, false);
 
     // remove touch event listeners from canvas element
-    this.canvas.removeEventListener("touchstart", this.press, false);
-    this.canvas.removeEventListener("touchmove", this.drag, false);
-    this.canvas.removeEventListener("touchend", this.release, false);
-    this.canvas.removeEventListener("touchcancel", this.cancel, false);
+    // this.canvas.removeEventListener("touchstart", this.press, false);
+    // this.canvas.removeEventListener("touchmove", this.drag, false);
+    // this.canvas.removeEventListener("touchend", this.release, false);
+    // this.canvas.removeEventListener("touchcancel", this.cancel, false);
   }
 
   public undo() {

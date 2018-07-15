@@ -13,10 +13,22 @@ const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   }
 };
 
+const isDrawing = (state: boolean = false, action: Action) => {
+  switch (action.type) {
+    case "NEW_DRAWING_REQUEST":
+      return true;
+    default:
+      return state;
+  }
+};
+
 const drawing = (state: Drawing = null, action: Action) => {
   switch (action.type) {
     case "NEW_DRAWING_REQUEST": {
       return new Drawing(action.request.name);
+    }
+    case "NEW_DRAWING_SUCCESS": {
+      return action.response.drawing;
     }
     default:
       return state;
@@ -65,6 +77,7 @@ const error = (state: string = "", action: Action): string => {
 
 export type State = {
   method: PaintKind;
+  isDrawing: boolean;
   drawing?: Drawing;
   isSaving: boolean;
   isLoading: boolean;
@@ -73,6 +86,7 @@ export type State = {
 
 export const initialState: State = {
   method: PaintKind.Freehand,
+  isDrawing: false,
   drawing: null,
   isSaving: false,
   isLoading: false,
@@ -81,6 +95,7 @@ export const initialState: State = {
 
 export const rootReducer = combineReducers<State>({
   method,
+  isDrawing,
   drawing,
   isSaving,
   isLoading,

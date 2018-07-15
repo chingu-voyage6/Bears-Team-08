@@ -14,9 +14,8 @@ export type DrawingOptions = {
 
 export class Drawing {
   readonly id: string;
-  name: string;
-  paints: Paint[];
-  history: any[];
+  private paints: Paint[];
+  private history: any[];
   width: number;
   height: number;
 
@@ -26,7 +25,7 @@ export class Drawing {
     return new Drawing(json.name, { paints, history });
   }
 
-  constructor(name, options: DrawingOptions = {}) {
+  constructor(public name: string, options: DrawingOptions = {}) {
     this.id = uuidv4();
     this.paints = options.paints || [];
     this.history = options.history || [];
