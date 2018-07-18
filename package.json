@@ -113,8 +113,11 @@
       "<rootDir>/config/jest/testSetup.ts"
     ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/[^flycheck]*.(j|t)s?(x)",
-      "<rootDir>/src/**/[^flycheck]?(*.)(spec|test).(j|t)s?(x)"
+      "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)",
+      "<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/.*.d.ts"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",

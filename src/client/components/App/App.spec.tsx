@@ -5,7 +5,7 @@ import { Store } from "redux";
 
 import { App } from ".";
 import { DrawingBoard, Explorer, Navbar, Sidebar } from "../";
-import { wrapComponentInProvider, createStore } from "@shared/testUtil";
+import { wrapComponentInProvider, createStore } from "@shared/test/util";
 import { rootReducer, initialState } from "../../reducers";
 import { newDrawing, changePaintMethod } from "../../actions";
 

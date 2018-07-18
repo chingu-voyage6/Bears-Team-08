@@ -16,8 +16,6 @@ if (!process.env.CI && argv.indexOf("--watchAll") === -1) {
   argv.push("--watch");
 }
 
-argv.push("--coverage");
-
 jest.run(argv).catch(err => {
   throw err;
 });

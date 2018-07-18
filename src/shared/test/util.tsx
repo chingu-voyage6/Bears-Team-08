@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Redux from "redux";
 import { Provider } from "react-redux";
 
-import { rootReducer, State } from "../client/reducers";
+import { rootReducer, State } from "../../client/reducers";
 
 export const createStore = (initialState?: State): Redux.Store => {
   return Redux.createStore(rootReducer, initialState);
