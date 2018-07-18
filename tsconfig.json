@@ -1,23 +1,28 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build/dist",
-    "module": "esnext",
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
     "allowJs": true,
+    "baseUrl": ".",
     "jsx": "react",
+    "lib": ["es6", "dom"],
+    "skipLibCheck": true,
+    "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": "frontend"
+    "outDir": "build",
+    "rootDir": "src",
+    "sourceMap": true,
+    "target": "es5",
+    "paths": {
+      "@shared/*": ["src/shared/*"]
+    }
   },
   "exclude": [
     "node_modules",
     "build",
     "scripts",
-    "acceptance-tests",
+    "config",
     "webpack",
+    "acceptance-tests",
     "jest",
-    "frontend/setupTests.ts"
+    "src/client/setupTests.ts"
   ]
 }
