@@ -34,8 +34,7 @@ if (Config.isProduction) {
 
 // Connect to Mongo on start
 // TODO: Move the url to config.ts
-db
-  .connect("mongodb://localhost:27017")
+db.connect("mongodb://db:27017")
   .then(() => {
     app.listen(Config.port, () => {
       console.log(`Listening on port ${Config.port}`);
