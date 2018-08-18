@@ -7,7 +7,7 @@ import "./styles.css";
 
 import { App } from "./components/App";
 import { rootReducer, State } from "./reducers";
-import registerServiceWorker from "./registerServiceWorker";
+import { register } from "./registerServiceWorker";
 
 const store: Store<State> = createStore(rootReducer);
 
@@ -17,4 +17,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root") as HTMLElement
 );
-registerServiceWorker();
+
+register();
