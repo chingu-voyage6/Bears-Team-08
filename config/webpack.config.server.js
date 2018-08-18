@@ -12,7 +12,7 @@ const paths = require("./paths");
 const env = getServerEnvironment();
 
 module.exports = {
-  entry: [paths.appServerIndexTs],
+  entry: [paths.appServerIndex],
   target: "node",
   devtool: "source-map",
   output: {

@@ -1,6 +1,10 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs"
-  }
+    "rootDir": ".."
+  },
+  "include": [
+    "src/server/**/*",
+    "src/shared/**/*"
+  ]
 }

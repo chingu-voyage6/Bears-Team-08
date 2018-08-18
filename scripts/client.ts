@@ -53,11 +53,13 @@ const config: Webpack.Configuration = {
             }
           },
           {
-            test: /\.ts/,
+            test: /\.(ts|tsx)$/,
+            exclude: [/\.(spec|test).(ts|tsx)$/],
             use: [
               {
                 loader: "ts-loader",
                 options: {
+                  // disable type checker - we will use it in fork plugin
                   transpileOnly: true
                 }
               }
