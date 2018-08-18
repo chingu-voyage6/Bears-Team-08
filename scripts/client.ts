@@ -3,7 +3,6 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import * as Express from "express";
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as MiniCssExtractPlugin from "mini-css-extract-plugin";
 import * as Webpack from "webpack";
@@ -121,7 +120,7 @@ const init = async (): Promise<void> => {
       console.log("building");
     });
   } else if (cmd === "watch") {
-    const proxy = Express();
+    // const proxy = Express();
     const res = await WebpackServe({}, { config, clipboard: true });
   } else {
     console.log("Please run either `yarn client build` or `yarn client watch`");
