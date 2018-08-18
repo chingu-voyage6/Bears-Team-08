@@ -17,7 +17,7 @@ export type ConnectedDispatch = {};
 
 export type Props = ConnectedState & ConnectedDispatch;
 
-class _Navbar extends React.Component<Props> {
+class PureNavbar extends React.Component<Props> {
   public render() {
     const { drawing } = this.props;
 
@@ -50,6 +50,9 @@ const mapDispatchToProps = (
 ): ConnectedDispatch => ({});
 
 export const Navbar = compose(
-  _Navbar,
-  connect(mapStateToProps, mapDispatchToProps)
+  PureNavbar,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 );

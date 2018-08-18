@@ -1,9 +1,35 @@
 {
-  "extends": ["tslint-config-prettier"],
-  "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts"
-    ]
-  }
+    "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+    "rules": {
+        "no-bitwise": false,
+        "interface-over-type-literal": false,
+        "object-literal-sort-keys": false,
+        "ordered-imports": false,
+        "interface-name": false,
+        "max-classes-per-file": false,
+        "no-console": {
+            "severity": "warning",
+            "options": [
+                "debug",
+                "info",
+                "log",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
+        }
+    },
+    "jsRules": {
+        "no-bitwise": false
+    },
+    "linterOptions": {
+        "exclude": [
+            "config/**/*.js",
+            "config/**/*.ts",
+            "node_modules/**/*.js",
+            "node_modules/**/*.ts",
+            "coverage/**/*.js",
+            "coverage/**/*.ts"
+        ]
+    }
 }

@@ -52,11 +52,10 @@ module.exports = {
   appPackageJson: resolveApp("package.json"),
   appSrc: resolveApp("src"),
   yarnLockFile: resolveApp("yarn.lock"),
-  testsSetup: resolveApp("src/client/setupTests.ts"),
   appNodeModules: resolveApp("node_modules"),
   appTsClientConfig: resolveApp("tsconfig.client.json"),
   appTsServerConfig: resolveApp("tsconfig.server.json"),
-  appTsTestConfig: resolveApp("tsconfig.server.json"),
+  appTsTestConfig: resolveApp("config/tsconfig.server.json"),
   appTsLint: resolveApp("tslint.json"),
   publicUrl: getPublicUrl(resolveApp("package.json")),
   servedPath: getServedPath(resolveApp("package.json"))

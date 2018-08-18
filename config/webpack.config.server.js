@@ -14,7 +14,7 @@ const env = getServerEnvironment();
 module.exports = {
   entry: [paths.appServerIndexTs],
   target: "node",
-  devtool: "cheap-module-source-map",
+  devtool: "source-map",
   output: {
     pathinfo: true,
     filename: "server.js",
@@ -23,10 +23,10 @@ module.exports = {
       path.resolve(info.absoluteResourcePath).replace(/\\/g, "/")
   },
   resolve: {
-    // // This allows you to set a fallback for where Webpack should look for modules.
-    // // We placed these paths second because we want `node_modules` to "win"
-    // // if there are any conflicts. This matches Node resolution mechanism.
-    // // https://github.com/facebookincubator/create-react-app/issues/253
+    // This allows you to set a fallback for where Webpack should look for modules.
+    // We placed these paths second because we want `node_modules` to "win"
+    // if there are any conflicts. This matches Node resolution mechanism.
+    // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ["node_modules", paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
       process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
@@ -145,7 +145,7 @@ module.exports = {
     new webpack.DefinePlugin(env.stringified),
     new CaseSensitivePathsPlugin(),
     new ForkTsCheckerWebpackPlugin({
-      async: false,
+      async: true,
       watch: paths.appSrc,
       tsconfig: paths.appTsServerConfig,
       tslint: paths.appTsLint

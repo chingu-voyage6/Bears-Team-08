@@ -61,6 +61,7 @@ const clientDevServer = async (config, port, proxy) => {
 const serverDevServer = async (config, port) => {
   const compiler = webpack(config);
   nodemon({ script: serverJs });
+  let started = false;
 
   return new Promise((resolve, reject) => {
     const watching = compiler.watch({}, async (err, stats) => {
@@ -68,7 +69,13 @@ const serverDevServer = async (config, port) => {
         return reject(err);
       }
       nodemon.emit("restart");
+      if (started) {
+        console.log("Restarting server");
+      } else {
+        started = true;
+      }
     });
+
     resolve({
       stop: () => {
         watching.close();

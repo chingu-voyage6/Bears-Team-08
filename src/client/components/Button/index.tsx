@@ -19,7 +19,7 @@ export class Button extends React.Component<Props> {
       ...this.props,
       className
     };
-    delete props["active"];
+    delete props.active;
     return <button {...props} />;
   }
 }

@@ -23,8 +23,8 @@ type ExplorerState = {
   newDrawingName: string;
 };
 
-class _Explorer extends React.Component<Props, ExplorerState> {
-  state: ExplorerState = {
+class BaseExplorer extends React.Component<Props, ExplorerState> {
+  public state: ExplorerState = {
     newDrawingName: ""
   };
 
@@ -67,6 +67,9 @@ const mapDispatchToProps = (
 });
 
 export const Explorer = compose(
-  _Explorer,
-  connect(mapStateToProps, mapDispatchToProps)
+  BaseExplorer,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 );

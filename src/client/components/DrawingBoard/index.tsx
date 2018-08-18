@@ -22,7 +22,7 @@ export type ConnectedDispatch = {
 
 export type Props = ConnectedState & ConnectedDispatch;
 
-class _DrawingBoard extends React.Component<Props> {
+class PureDrawingBoard extends React.Component<Props> {
   private pad: Pad;
 
   public componentDidMount() {
@@ -56,6 +56,9 @@ const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({
 });
 
 export const DrawingBoard = compose(
-  _DrawingBoard,
-  connect(mapStateToProps, mapDispatchToProps)
+  PureDrawingBoard,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 );

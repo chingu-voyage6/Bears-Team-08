@@ -100,6 +100,7 @@ const getServerEnvironment = () => {
       return env;
     }, defaultEnvironment);
   raw.SERVER_APP_PORT = parseInt(raw.SERVER_PORT, 10) || 3010;
+  raw.SERVER_APP_DB_URL = raw.SERVER_APP_DB_URL || "mongodb://localhost:27017";
 
   const stringified = {
     "process.env": Object.keys(raw).reduce((env, key) => {

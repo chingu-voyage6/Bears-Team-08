@@ -1,46 +1,59 @@
-import * as Express from "express";
-import * as bodyParser from "body-parser";
-import * as passport from "passport";
-
+import {
+  AppServer,
+  createServer,
+  AppContainer,
+  createAppContainer
+} from "./server";
+import { newLogger } from "./util/logger";
 import * as Config from "./config";
-import * as db from "./db";
-import { userRouter } from "./user";
+import { MongoDB } from "./lib/database";
 
-const app = Express();
-app.use(bodyParser.urlencoded({ extended: true })); // allow data from a post
-app.use(bodyParser.json());
+export const init = async () => {
+  const logger = newLogger();
+  try {
+    const db = new MongoDB(Config.mongoURI);
 
-app.use(passport.initialize());
-app.use(passport.session());
+    const container = createAppContainer(db, logger);
+    const app = createServer(container);
 
-const router = Express.Router();
-
-router.get("/", async (req, res) => {
-  res.json({ message: "hello world" });
-});
-
-router.use((req, res) => {
-  res.send("404: Page not Found");
-});
-
-app.use(`${Config.baseRoute}/user`, userRouter);
-app.use(Config.baseRoute, router);
-
-if (Config.isProduction) {
-  console.log("is production", Config.staticFiles);
-  app.use("/", Express.static(Config.staticFiles));
-  app.use("/:drawingId", Express.static(Config.indexFile));
-}
-
-// Connect to Mongo on start
-// TODO: Move the url to config.ts
-db.connect("mongodb://db:27017")
-  .then(() => {
     app.listen(Config.port, () => {
-      console.log(`Listening on port ${Config.port}`);
+      logger.info(`Application running on port: ${Config.port}`);
     });
-  })
-  .catch(err => {
-    console.log("Unable to connect to Mongo.");
-    process.exit(1);
+
+    registerProcessEvents(app, container);
+  } catch (err) {
+    logger.error("An error occured while initializing application: ", err);
+  }
+};
+
+const registerProcessEvents = (
+  app: AppServer,
+  { db, logger }: AppContainer
+) => {
+  process.on("uncaughtException", (err: Error) => {
+    logger.error("UncaughtException:", err);
   });
+
+  process.on("unhandledRejection", (err: Error) => {
+    logger.error("UnhandledRejection:", err);
+  });
+
+  process.on("SIGTERM", async () => {
+    logger.info("Starting graceful shutdown");
+
+    let exitCode = 0;
+    const shutdown = [app.close(), db.close()];
+    for (const s of shutdown) {
+      try {
+        await s;
+      } catch (err) {
+        logger.error("Error in graceful shutdown ", err);
+        exitCode = 1;
+      }
+    }
+
+    process.exit(exitCode);
+  });
+};
+
+init();

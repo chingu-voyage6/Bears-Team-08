@@ -27,31 +27,29 @@ export abstract class Paint {
     }
   }
 
-  readonly kind: PaintKind;
-  private _display: boolean = true;
+  public readonly kind: PaintKind;
+  private disp: boolean = true;
   public abstract draw(ctx: CanvasRenderingContext2D);
   public abstract toJSON(): PaintJSON;
 
-  constructor() {}
-
   public get display(): boolean {
-    return this._display;
+    return this.disp;
   }
 
   public set display(value: boolean) {
-    this._display = value;
+    this.disp = value;
   }
 }
 
 export class PaintFreehand extends Paint {
-  static fromJSON(json: PaintJSON): PaintFreehand {
+  public static fromJSON(json: PaintJSON): PaintFreehand {
     const freehand = new PaintFreehand();
     const points = json.points;
     points.forEach(point => freehand.addPoint(point));
     return freehand;
   }
 
-  private _points: Point[] = [];
+  private rawPoints: Point[] = [];
 
   constructor(public readonly lineWidth = 5) {
     super();
@@ -63,11 +61,11 @@ export class PaintFreehand extends Paint {
   }
 
   public addPoint(point: Point) {
-    this._points.push(point);
+    this.rawPoints.push(point);
   }
 
   public popPoint(): Point {
-    return this._points.pop();
+    return this.rawPoints.pop();
   }
 
   public toJSON(): PaintJSON {
@@ -78,7 +76,7 @@ export class PaintFreehand extends Paint {
   }
 
   public get points() {
-    return this._points.map(point => point);
+    return this.rawPoints.map(point => point);
   }
 
   public draw(ctx: CanvasRenderingContext2D) {
@@ -103,12 +101,14 @@ export class PaintFreehand extends Paint {
 }
 
 export class PaintLine extends Paint {
-  static fromJSON(json: PaintJSON): PaintLine {
+  public static fromJSON(json: PaintJSON): PaintLine {
     return new PaintLine();
   }
 
   public kind = PaintKind.Erase;
-  public draw(context: CanvasRenderingContext2D) {}
+  public draw(context: CanvasRenderingContext2D) {
+    return null;
+  }
 
   public toJSON(): PaintJSON {
     return {
@@ -119,12 +119,14 @@ export class PaintLine extends Paint {
 }
 
 export class PaintImage extends Paint {
-  static fromJSON(json: PaintJSON): PaintImage {
+  public static fromJSON(json: PaintJSON): PaintImage {
     return new PaintImage();
   }
 
   public kind = PaintKind.Image;
-  public draw(context: CanvasRenderingContext2D) {}
+  public draw(context: CanvasRenderingContext2D) {
+    return null;
+  }
 
   public toJSON(): PaintJSON {
     return {
@@ -135,12 +137,15 @@ export class PaintImage extends Paint {
 }
 
 export class PaintErase extends Paint {
-  static fromJSON(json: PaintJSON): PaintErase {
+  public static fromJSON(json: PaintJSON): PaintErase {
     return new PaintLine();
   }
 
   public kind = PaintKind.Erase;
-  public draw(context: CanvasRenderingContext2D) {}
+
+  public draw(context: CanvasRenderingContext2D) {
+    return null;
+  }
 
   public toJSON(): PaintJSON {
     return {

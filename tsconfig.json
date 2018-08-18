@@ -3,7 +3,7 @@
     "allowJs": true,
     "baseUrl": ".",
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": ["es5", "es6", "dom"],
     "skipLibCheck": true,
     "module": "commonjs",
     "moduleResolution": "node",
@@ -23,6 +23,6 @@
     "webpack",
     "acceptance-tests",
     "jest",
-    "src/client/setupTests.ts"
+    "server-old"
   ]
 }

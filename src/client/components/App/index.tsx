@@ -20,21 +20,21 @@ export type ConnectedDispatch = {};
 
 export type Props = ConnectedState & ConnectedDispatch;
 
-class _App extends React.Component<Props> {
+class BaseApp extends React.Component<Props> {
   public async componentWillMount() {
     try {
       const res = await fetch("/api");
       const json = await res
         .json()
         .catch(error => Promise.reject({ msg: "rawr", error }));
-      const message = json["message"];
+      const message = json.message;
       this.setState({ message });
     } catch (error) {
       console.error("error caught", error);
     }
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     if (this.props.isDrawing) {
       /* const id = this.props.drawing.id; */
     }
@@ -68,5 +68,11 @@ const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({});
 
-export const App = compose(_App, connect(mapStateToProps, mapDispatchToProps));
+export const App = compose(
+  BaseApp,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+);
 export default App; // Jest requires this for some reason
