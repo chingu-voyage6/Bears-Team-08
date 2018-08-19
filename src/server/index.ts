@@ -4,32 +4,45 @@ import {
   AppContainer,
   createAppContainer
 } from "./server";
-import { newLogger } from "./util/logger";
-import * as Config from "./config";
-import { MongoDB } from "./lib/database";
+import * as Config from "./util/config";
+import { baseLogger } from "./lib/logger";
+import * as DB from "./lib/database";
 
-export const init = async () => {
-  const logger = newLogger();
+const logger = baseLogger;
+
+export async function init() {
+  const components = [];
+
   try {
-    const db = new MongoDB(Config.mongoURI);
+    const webLogger = baseLogger.child({ name: "webserver" });
 
-    const container = createAppContainer(db, logger);
+    const db = await DB.connect(Config.mongoURI);
+    components.push(() => {
+      db.close();
+    });
+
+    const container = createAppContainer(db, webLogger);
     const app = createServer(container);
+    components.push(() => {
+      app.close();
+    });
 
     app.listen(Config.port, () => {
       logger.info(`Application running on port: ${Config.port}`);
     });
 
-    registerProcessEvents(app, container);
-  } catch (err) {
-    logger.error("An error occured while initializing application: ", err);
+    registerProcessEvents(components);
+  } catch (e) {
+    let exitCode = 0;
+    for (const c of components) {
+      const code = await shutdown(c);
+      exitCode = code;
+    }
+    throw e;
   }
-};
+}
 
-const registerProcessEvents = (
-  app: AppServer,
-  { db, logger }: AppContainer
-) => {
+function registerProcessEvents(components: Array<() => Promise<void>>) {
   process.on("uncaughtException", (err: Error) => {
     logger.error("UncaughtException:", err);
   });
@@ -42,18 +55,26 @@ const registerProcessEvents = (
     logger.info("Starting graceful shutdown");
 
     let exitCode = 0;
-    const shutdown = [app.close(), db.close()];
-    for (const s of shutdown) {
-      try {
-        await s;
-      } catch (err) {
-        logger.error("Error in graceful shutdown ", err);
-        exitCode = 1;
+    for (const c of components) {
+      const code = await shutdown(c);
+      if (code > 0) {
+        exitCode = code;
       }
     }
-
     process.exit(exitCode);
   });
-};
+}
 
-init();
+async function shutdown(component: () => Promise<void>): Promise<number> {
+  try {
+    await component();
+  } catch (err) {
+    return 1;
+  }
+  return 0;
+}
+
+init().catch(err => {
+  logger.error("An error occured while initializing application: ", err);
+  process.emit("SIGTERM");
+});

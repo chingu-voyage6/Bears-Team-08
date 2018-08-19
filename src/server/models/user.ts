@@ -64,5 +64,4 @@ userSchema.methods.comparePassword = function(pass, cb) {
   );
 };
 
-export const createUserModel = (db: MongoDB) =>
-  db.createModel("User", userSchema);
+export const createUserModel = (db: MongoDB) => db.model("User", userSchema);

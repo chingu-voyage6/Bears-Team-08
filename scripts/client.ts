@@ -10,7 +10,7 @@ import * as WebpackServe from "webpack-serve";
 import ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
-import * as Paths from "../config/paths";
+import * as Paths from "../src/lib/paths";
 
 const cmd = process.argv[2] || "build";
 const isProduction = process.env.NODE_ENV === "production";

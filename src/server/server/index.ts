@@ -1,10 +1,10 @@
 import { Server } from "http";
 
-import * as Express from "express";
-import * as bodyParser from "body-parser";
+import * as Koa from "koa";
+import * as Helmet from "koa-helmet";
 
-import * as Config from "../config";
-import { Logger } from "../util/logger";
+import * as Config from "../util/config";
+import { Logger } from "../lib/logger";
 import { MongoDB } from "../lib/database";
 import { UserManager } from "../managers";
 import { UserRepository } from "../repositories";
@@ -17,7 +17,7 @@ export interface Options {
 
 export type AppContainer = {
   db: MongoDB;
-  logger: Logger;
+  webLogger: Logger;
   repositories: {
     user: UserRepository;
   };
@@ -28,13 +28,13 @@ export type AppContainer = {
 
 export const createAppContainer = (
   db: MongoDB,
-  logger: Logger
+  webLogger: Logger
 ): AppContainer => {
   const userRepo = new UserRepository(db);
 
   return {
     db,
-    logger,
+    webLogger,
     repositories: {
       user: userRepo
     },
@@ -45,10 +45,10 @@ export const createAppContainer = (
 };
 
 export class AppServer {
-  private app: Express.Application;
+  private app: Koa;
   private server: Server;
 
-  constructor(app: Express.Application) {
+  constructor(app: Koa) {
     this.app = app;
     // this.db = args.db;
     // this.logger = args.logger;
@@ -102,15 +102,16 @@ export class AppServer {
   }
 }
 
-export const createServer = (args: AppContainer): AppServer => {
-  const app = Express();
+export function createServer(args: AppContainer): AppServer {
+  const app = new Koa();
   const server = new AppServer(app);
 
-  // app.use()
+  app.use(Helmet());
+
   if (Config.isProduction) {
-    this.app.use("/", Express.static(Config.staticFiles));
-    this.app.use("/:drawingId", Express.static(Config.indexFile));
+    // this.app.use("/", Express.static(Config.staticFiles));
+    // this.app.use("/:drawingId", Express.static(Config.indexFile));
   }
 
   return server;
-};
+}

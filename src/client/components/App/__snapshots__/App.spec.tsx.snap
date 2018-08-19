@@ -2,10 +2,14 @@
 
 exports[`components/App renders 1`] = `
 <div
-  className="undefined undefined"
+  className="App Exploring"
 >
-  <section />
-  <div>
+  <section
+    className="Navbar"
+  />
+  <div
+    className="Explorer"
+  >
     <label>
       Name:
       <input
