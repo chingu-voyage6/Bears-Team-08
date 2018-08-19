@@ -1,5 +1,5 @@
-import { Paint, PaintKind } from "@shared/paint";
 import { Drawing } from "@shared/drawing";
+import { Paint, PaintKind } from "@shared/paint";
 
 type Req<T> = { request: T };
 type Res<T> = { response: T };
@@ -131,13 +131,13 @@ export const asErr = <ErrKind extends ActionKind>(type: ErrKind) => <_Req>(
 ) => ({ type, request, error });
 
 type Dispatch<A> = (a: A) => A;
-type Thunk<Req, Res> = (request: Req) => Promise<Res>;
+type Resolve<_Req, _Res> = (request: _Req) => Promise<_Res>;
 
 type ReqCreator<A, _Req> = (req: _Req) => A;
 type ResCreator<A, _Req, _Res> = (req: _Req, res: _Res) => A;
 type ErrCreator<A, _Req> = (req: _Req, err: string) => A;
 
-export const dispatcher = <_Req, _Res>(fn: Thunk<_Req, _Res>) => <
+export const dispatcher = <_Req, _Res>(fn: Resolve<_Req, _Res>) => <
   A extends Action
 >(
   req: ReqCreator<A, _Req>,
@@ -147,5 +147,5 @@ export const dispatcher = <_Req, _Res>(fn: Thunk<_Req, _Res>) => <
   dispatch(req(request));
   fn(request)
     .then(response => dispatch(res(request, response)))
-    .catch(err => dispatch(err(request, err.message)));
+    .catch(e => dispatch(err(request, e.message)));
 };

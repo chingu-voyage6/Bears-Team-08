@@ -13,17 +13,17 @@ export type DrawingOptions = {
 };
 
 export class Drawing {
-  readonly id: string;
-  private paints: Paint[];
-  private history: any[];
-  width: number;
-  height: number;
-
-  static fromJSON(json: DrawingJSON): Drawing {
+  public static fromJSON(json: DrawingJSON): Drawing {
     const paints = [];
     const history = [];
     return new Drawing(json.name, { paints, history });
   }
+
+  public readonly id: string;
+  private paints: Paint[];
+  private history: any[];
+  private width: number;
+  private height: number;
 
   constructor(public name: string, options: DrawingOptions = {}) {
     this.id = uuidv4();

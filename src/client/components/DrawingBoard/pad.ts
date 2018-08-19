@@ -19,22 +19,15 @@ interface PadProps {
   canvas: HTMLCanvasElement;
   state: State;
   seq: number;
-  history: Array<Paint>;
+  history: Paint[];
 }
 
 export class Pad {
-  private canvas: HTMLCanvasElement;
-  private context: CanvasRenderingContext2D;
-  private method: PaintKind;
-  private state: State;
-  private history: Paint[];
-  private seq: number;
-
   public static fromHistory(canvas: HTMLCanvasElement, history: Paint[]) {
     return new Pad({
       canvas,
       state: State.NotEditing,
-      history: history,
+      history,
       seq: history.length
     });
   }
@@ -47,6 +40,13 @@ export class Pad {
       seq: 0
     });
   }
+
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private method: PaintKind;
+  private state: State;
+  private history: Paint[];
+  private seq: number;
 
   private constructor(props: PadProps) {
     this.canvas = props.canvas;
@@ -142,8 +142,7 @@ export class Pad {
   private release = (e: MouseEvent) => {
     switch (this.state) {
       case State.Init:
-      case State.NotEditing: {
-      }
+      case State.NotEditing:
       case State.Editing: {
         this.addPaint(e);
         this.state = State.NotEditing;

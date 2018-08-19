@@ -27,7 +27,7 @@ type MethodButtonProps = {
   handleClick: (method: PaintKind) => () => void;
 };
 
-class _SideBar extends React.Component<Props> {
+class PureSideBar extends React.Component<Props> {
   public render() {
     const { method } = this.props;
     return (
@@ -72,6 +72,9 @@ const mapDispatchToProps = (
 });
 
 export const Sidebar = compose(
-  _SideBar,
-  connect(mapStateToProps, mapDispatchToProps)
+  PureSideBar,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 );

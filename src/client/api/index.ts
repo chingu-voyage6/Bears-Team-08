@@ -16,7 +16,7 @@ export const newDrawing = async (
 ): Promise<NewDrawingRes> => {
   // axios("/api", { header: { AuthoSTuff: `Bearer ${user.token}` } });
   return new Promise(resolve => setTimeout(resolve, 5000)).then(() => {
-    console.log("resolved");
+    // console.log("resolved");
     return Promise.resolve({ drawing: new Drawing(`Resolved ${req.name}`) });
   });
   // return Promise.resolve({ drawing: new Drawing(req.name) });

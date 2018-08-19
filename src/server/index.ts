@@ -1,46 +1,80 @@
-import * as Express from "express";
-import * as bodyParser from "body-parser";
-import * as passport from "passport";
+import {
+  AppServer,
+  createServer,
+  AppContainer,
+  createAppContainer
+} from "./server";
+import * as Config from "./util/config";
+import { baseLogger } from "./lib/logger";
+import * as DB from "./lib/database";
 
-import * as Config from "./config";
-import * as db from "./db";
-import { userRouter } from "./user";
+const logger = baseLogger;
 
-const app = Express();
-app.use(bodyParser.urlencoded({ extended: true })); // allow data from a post
-app.use(bodyParser.json());
+export async function init() {
+  const components = [];
 
-app.use(passport.initialize());
-app.use(passport.session());
+  try {
+    const webLogger = baseLogger.child({ name: "webserver" });
 
-const router = Express.Router();
+    const db = await DB.connect(Config.mongoURI);
+    components.push(() => {
+      db.close();
+    });
 
-router.get("/", async (req, res) => {
-  res.json({ message: "hello world" });
-});
+    const container = createAppContainer(db, webLogger);
+    const app = createServer(container);
+    components.push(() => {
+      app.close();
+    });
 
-router.use((req, res) => {
-  res.send("404: Page not Found");
-});
+    app.listen(Config.port, () => {
+      logger.info(`Application running on port: ${Config.port}`);
+    });
 
-app.use(`${Config.baseRoute}/user`, userRouter);
-app.use(Config.baseRoute, router);
-
-if (Config.isProduction) {
-  console.log("is production", Config.staticFiles);
-  app.use("/", Express.static(Config.staticFiles));
-  app.use("/:drawingId", Express.static(Config.indexFile));
+    registerProcessEvents(components);
+  } catch (e) {
+    let exitCode = 0;
+    for (const c of components) {
+      const code = await shutdown(c);
+      exitCode = code;
+    }
+    throw e;
+  }
 }
 
-// Connect to Mongo on start
-// TODO: Move the url to config.ts
-db.connect("mongodb://db:27017")
-  .then(() => {
-    app.listen(Config.port, () => {
-      console.log(`Listening on port ${Config.port}`);
-    });
-  })
-  .catch(err => {
-    console.log("Unable to connect to Mongo.");
-    process.exit(1);
+function registerProcessEvents(components: Array<() => Promise<void>>) {
+  process.on("uncaughtException", (err: Error) => {
+    logger.error("UncaughtException:", err);
   });
+
+  process.on("unhandledRejection", (err: Error) => {
+    logger.error("UnhandledRejection:", err);
+  });
+
+  process.on("SIGTERM", async () => {
+    logger.info("Starting graceful shutdown");
+
+    let exitCode = 0;
+    for (const c of components) {
+      const code = await shutdown(c);
+      if (code > 0) {
+        exitCode = code;
+      }
+    }
+    process.exit(exitCode);
+  });
+}
+
+async function shutdown(component: () => Promise<void>): Promise<number> {
+  try {
+    await component();
+  } catch (err) {
+    return 1;
+  }
+  return 0;
+}
+
+init().catch(err => {
+  logger.error("An error occured while initializing application: ", err);
+  process.emit("SIGTERM");
+});
