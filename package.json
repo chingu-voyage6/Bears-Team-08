@@ -124,7 +124,7 @@
     },
     "jest": {
         "setupFiles": [
-            "<rootDir>/src/lib/polyfills.js",
+            "<rootDir>/src/lib/polyfills.ts",
             "<rootDir>/src/lib/testSetup.ts"
         ],
         "testRegex": "\\.(test|spec)\\.(jsx?|tsx?)$",
