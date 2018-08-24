@@ -41,23 +41,23 @@ function getServedPath(appPackageJson) {
   return ensureSlash(servedUrl, true);
 }
 
-// config after eject: we're in ./config/
-export const dotenv = resolveApp("../env");
+export const appBuildDir = resolveApp("build");
 export const appClientBuild = resolveApp("build/client");
-export const appServerBuild = resolveApp("build/server");
-export const appPublic = resolveApp("src/public");
-export const appFavicon = resolveApp("src/public/favicon.ico");
-export const appManifest = resolveApp("src/public/manifest.json");
-export const appHtml = resolveApp("src/public/index.html");
 export const appClientIndex = resolveApp("src/client/index.tsx");
-export const appServerIndex = resolveApp("src/server/index.ts");
-export const appPackageJson = resolveApp("package.json");
-export const appSrc = resolveApp("src");
-export const yarnLockFile = resolveApp("yarn.lock");
+export const appFavicon = resolveApp("src/public/favicon.ico");
+export const appHtml = resolveApp("src/public/index.html");
+export const appManifest = resolveApp("src/public/manifest.json");
 export const appNodeModules = resolveApp("node_modules");
+export const appPackageJson = resolveApp("package.json");
+export const appPublic = resolveApp("src/public");
+export const appServerBuild = resolveApp("build/server");
+export const appServerIndex = resolveApp("src/server/index.ts");
+export const appSrc = resolveApp("src");
 export const appTsClientConfig = resolveApp("config/tsconfig.client.json");
+export const appTsLint = resolveApp("tslint.json");
 export const appTsServerConfig = resolveApp("config/tsconfig.server.json");
 export const appTsTestConfig = resolveApp("config/tsconfig.test.json");
-export const appTsLint = resolveApp("tslint.json");
+export const dotenv = resolveApp("../env");
 export const publicUrl = getPublicUrl(resolveApp("package.json"));
 export const servedPath = getServedPath(resolveApp("package.json"));
+export const yarnLockFile = resolveApp("yarn.lock");

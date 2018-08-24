@@ -7,9 +7,9 @@ import * as Nodemon from "nodemon";
 import ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
-import * as Paths from "../src/lib/paths";
+import * as Paths from "../lib/paths";
 
-const cmd = process.argv[2] || "build";
+const cmd = process.argv[2] || "watch";
 const isProduction = process.env.NODE_ENV === "production";
 
 const config: Webpack.Configuration = {
