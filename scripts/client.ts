@@ -12,7 +12,6 @@ import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
 import * as Paths from "../lib/paths";
 
-const cmd = process.argv[2] || "watch";
 const isProduction = process.env.NODE_ENV === "production";
 process.env.WEBPACK_SERVE = process.env.NODE_ENV;
 
@@ -102,7 +101,6 @@ const config: Webpack.Configuration = {
       favicon: Paths.appFavicon
     }),
     new ForkTsCheckerWebpackPlugin({
-      async: true,
       watch: Paths.appSrc,
       tsconfig: Paths.appTsClientConfig,
       tslint: Paths.appTsLint
@@ -113,18 +111,38 @@ const config: Webpack.Configuration = {
   }
 };
 
-const init = async (): Promise<void> => {
-  if (cmd === "build") {
-    const compiler = Webpack(config);
-    compiler.run(() => {
-      console.log("building");
-    });
-  } else if (cmd === "watch") {
-    // const proxy = Express();
-    const res = await WebpackServe({}, { config, clipboard: true });
-  } else {
-    console.log("Please run either `yarn client build` or `yarn client watch`");
-  }
-};
+async function build(): Promise<void> {
+  const compiler = Webpack(config);
+  compiler.run(() => {
+    console.log("building");
+  });
+}
 
-init();
+async function watch(): Promise<void> {
+  const res = await WebpackServe({}, { config, clipboard: true });
+  return;
+}
+
+enum Command {
+  Build = "build",
+  Watch = "watch"
+}
+
+async function init(): Promise<void> {
+  const cmd = process.argv[2] || "build";
+  switch (cmd) {
+    case Command.Watch: {
+      console.log("Watching");
+      await watch();
+      break;
+    }
+    case Command.Build:
+    default: {
+      console.log("Building");
+      await build();
+      break;
+    }
+  }
+}
+
+init().catch(e => console.log(e));

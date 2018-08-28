@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as Styles from "./button.module.css";
+import * as Styles from "./button.css";
 
 export type Props = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,

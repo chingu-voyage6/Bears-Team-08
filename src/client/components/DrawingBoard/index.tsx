@@ -3,7 +3,7 @@ import { findDOMNode } from "react-dom";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
-import * as Styles from "./drawingBoard.module.css";
+import * as Styles from "./drawingBoard.css";
 import { State } from "../../reducers";
 import { Action, addPaint, updatePaint } from "../../actions";
 import { compose } from "../../utils";

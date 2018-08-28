@@ -1,6 +1,8 @@
+/* tslint:disable:no-console */
+
 import * as knex from "knex";
 import { Database } from "../src/server/lib/database";
-import * as Config from "../src/server/util/config";
+import * as Config from "../src/server/config";
 
 type Command = "new" | "latest" | "rollback";
 
@@ -31,19 +33,6 @@ async function init(): Promise<void> {
         break;
       }
     }
-    // if (cmd === "migrate") {
-    //   await database.migrateLatest();
-    // } else if (cmd === "new") {
-    //   const name = argv[1];
-    //   if (!name) {
-    //     return Promise.reject("Please pass in name of migration");
-    //   }
-    //   await database.makeMigration(name);
-    // } else if (cmd === "rollback") {
-    //   await database.rollback();
-    // } else {
-    //   await database.migrateLatest();
-    // }
   } finally {
     await database.close();
   }

@@ -9,7 +9,6 @@ import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
 import * as Paths from "../lib/paths";
 
-const cmd = process.argv[2] || "build";
 const isProduction = process.env.NODE_ENV === "production";
 
 const config: Webpack.Configuration = {
@@ -50,11 +49,6 @@ const config: Webpack.Configuration = {
   ]
 };
 
-enum Command {
-  Build = "build",
-  Watch = "watch"
-}
-
 async function build(compiler: Webpack.Compiler): Promise<void> {
   compiler.run((err, stats) => {
     if (err) {
@@ -63,7 +57,7 @@ async function build(compiler: Webpack.Compiler): Promise<void> {
   });
 }
 
-async function watch(compiler: Webpack.Compiler) {
+async function watch(compiler: Webpack.Compiler): Promise<void> {
   const { path, filename } = compiler.options.output;
   const output = Path.resolve(path, filename);
   let running = false;
@@ -90,8 +84,14 @@ async function watch(compiler: Webpack.Compiler) {
   });
 }
 
+enum Command {
+  Build = "build",
+  Watch = "watch"
+}
+
 async function init(): Promise<void> {
   const compiler = Webpack(config);
+  const cmd = process.argv[2] || "build";
   switch (cmd) {
     case Command.Watch: {
       console.log("watching");

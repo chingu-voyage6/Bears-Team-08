@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
-import * as Styles from "./explorer.module.css";
+import * as Styles from "./explorer.css";
 import { State } from "../../reducers";
 import {
   Action,

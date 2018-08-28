@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
-import * as Styles from "./app.module.css";
+import * as Styles from "./app.css";
 import { Action } from "../../actions";
 import { DrawingBoard } from "../DrawingBoard";
 import { Explorer } from "../Explorer";
