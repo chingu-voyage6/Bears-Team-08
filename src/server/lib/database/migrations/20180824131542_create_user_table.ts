@@ -1,15 +1,19 @@
 import * as knex from "knex";
 
 export async function up(db: knex): Promise<void> {
-  migrateUserTable(db);
+  await migrateUserTable(db);
 }
 
 async function migrateUserTable(db: knex): Promise<void> {
-  const exists = db.schema.hasTable("user");
+  const exists = await db.schema.hasTable("user");
   if (!exists) {
     await db.schema.createTable("user", t => {
-      t.increments("id").primary();
-      t.string("username", 64).notNullable();
+      t.uuid("id").primary();
+      t.string("username", 64)
+        .notNullable()
+        .unique();
+      t.string("first_name");
+      t.string("last_name");
       t.string("passwd", 256);
       t.string("email", 64).unique();
       t.enum("role", ["user", "admin"]).notNullable();
@@ -18,7 +22,7 @@ async function migrateUserTable(db: knex): Promise<void> {
   }
 }
 
-export async function down(db: knex): Promise<any> {
+export async function down(db: knex): Promise<void> {
   const tables = ["user"];
-  return Promise.all(tables.map(db.schema.dropTableIfExists));
+  await Promise.all(tables.map(db.schema.dropTableIfExists));
 }

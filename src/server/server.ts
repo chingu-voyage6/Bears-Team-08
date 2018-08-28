@@ -3,20 +3,15 @@ import { Server } from "http";
 import * as Koa from "koa";
 import * as Helmet from "koa-helmet";
 
-import * as Config from "../util/config";
-import { Logger } from "../lib/logger";
-import { MongoDB } from "../lib/database";
-import { UserManager } from "../managers";
-import { UserRepository } from "../repositories";
-
-export interface Options {
-  // getContext: (res, req) => Promise<{ [key: string]: any }>;
-  port?: number;
-  serveStatic?: boolean;
-}
+import * as Config from "./config";
+import * as Middlewares from "./middlewares";
+import { Logger } from "./lib/logger";
+import { Database } from "./lib/database";
+import { UserManager } from "./managers";
+import { UserRepository } from "./repositories";
 
 export type AppContainer = {
-  db: MongoDB;
+  db: Database;
   webLogger: Logger;
   repositories: {
     user: UserRepository;
@@ -27,7 +22,7 @@ export type AppContainer = {
 };
 
 export const createAppContainer = (
-  db: MongoDB,
+  db: Database,
   webLogger: Logger
 ): AppContainer => {
   const userRepo = new UserRepository(db);
@@ -72,7 +67,7 @@ export class AppServer {
     return this.server;
   }
 
-  public close(): Promise<void> {
+  public closeServer(): Promise<void> {
     if (this.server === undefined) {
       throw new Error("Server is not initialized.");
     }
@@ -107,6 +102,9 @@ export function createServer(args: AppContainer): AppServer {
   const server = new AppServer(app);
 
   app.use(Helmet());
+  app.use(Middlewares.responseTime);
+  app.use(Middlewares.logRequest(args.webLogger));
+  app.use(Middlewares.errorHandler(args.webLogger));
 
   if (Config.isProduction) {
     // this.app.use("/", Express.static(Config.staticFiles));

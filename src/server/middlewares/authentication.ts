@@ -1,13 +1,13 @@
-// import { default as passport } from "passport";
+import { Context } from "koa";
+import { IMiddleware } from "koa-router";
+import { Authenticator } from "../lib/authentication";
 
-// import { UserModel } from "../models";
+export function authentication(authenticator: Authenticator): IMiddleware {
+  return async (ctx, next) => {
+    const token = ctx.headers.authorization;
+    const user = await authenticator.validate(token);
 
-// passport.serializeUser<any, any>((user, done) => {
-//   done(undefined, user.id);
-// });
-
-// passport.deserializeUser((id, done) => {
-//   UserModel.findById(id, (err, user) => {
-//     done(err, user);
-//   });
-// });
+    ctx.state.user = user;
+    await next();
+  };
+}

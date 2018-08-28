@@ -1,6 +1,6 @@
 import * as pino from "pino";
 
-import { isProduction } from "../util/config";
+import { isProduction } from "../config";
 
 export type Logger = pino.Logger;
 export type LoggerOptions = pino.LoggerOptions & { [key: string]: any };

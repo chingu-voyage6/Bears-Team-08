@@ -1,8 +1,10 @@
 import * as Path from "path";
 import * as Fs from "fs";
+
 import { config as setEnvironment } from "dotenv";
-import { Configuration } from "../lib/database";
 import { debug } from "webpack";
+
+import { Configuration } from "./lib/database";
 
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
@@ -22,7 +24,12 @@ export const isProduction: boolean = process.env.NODE_ENV === "production";
 export const isTest: boolean = process.env.NODE_ENV === "testing";
 export const isDev: boolean = process.env.NODE_ENV === "development";
 export const port: number = parseInt(process.env.PORT, 10) || 8090;
-export const secretKey: string = process.env.SECRET_KEY;
+if (isProduction && !process.env.SECRET_KEY) {
+  throw new Error(
+    "SECRET_KEY environmental variable required to be set in production mode"
+  );
+}
+export const secretKey: string = process.env.SECRET_KEY || "secretKey";
 export const staticFiles: string = resolveApp("build/client");
 export const dbConfig: Configuration = {
   host: process.env.DB_HOST || "localhost",
@@ -30,7 +37,7 @@ export const dbConfig: Configuration = {
   user: process.env.DB_USER || "quick-draw",
   password: process.env.DB_PASS || "",
   database: getDatabaseName(),
-  debug: !isProduction
+  debug: isDev
 };
 
 function getDatabaseName(): string {

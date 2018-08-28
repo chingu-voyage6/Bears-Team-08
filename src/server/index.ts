@@ -4,9 +4,9 @@ import {
   AppContainer,
   createAppContainer
 } from "./server";
-import * as Config from "./util/config";
+import * as Config from "./config";
 import { baseLogger } from "./lib/logger";
-import * as DB from "./lib/database";
+import { Database } from "./lib/database";
 
 const logger = baseLogger;
 
@@ -16,7 +16,7 @@ export async function init() {
   try {
     const webLogger = baseLogger.child({ name: "webserver" });
 
-    const db = await DB.connect(Config.mongoURI);
+    const db = new Database(Config.dbConfig);
     components.push(() => {
       db.close();
     });
@@ -24,7 +24,7 @@ export async function init() {
     const container = createAppContainer(db, webLogger);
     const app = createServer(container);
     components.push(() => {
-      app.close();
+      app.closeServer();
     });
 
     app.listen(Config.port, () => {

@@ -22,17 +22,17 @@ const migrationPath = path.resolve(__dirname, "./migrations");
 
 export class Database {
   private config: Configuration;
-  private conn: Connection | undefined;
+  private connection: Connection | undefined;
   constructor(config: Configuration) {
     this.config = config;
   }
 
   public async getConnection(): Promise<Connection> {
-    if (!this.conn) {
-      this.conn = await this.creatConnection();
+    if (!this.connection) {
+      this.connection = await this.createConnection();
     }
 
-    return this.conn;
+    return this.connection;
   }
 
   public async getTransaction(): Promise<Transaction> {
@@ -49,20 +49,38 @@ export class Database {
   }
 
   public async close(): Promise<void> {
-    if (this.conn) {
-      await this.conn.destroy();
-      this.conn = undefined;
+    if (this.connection) {
+      const conn = await this.connection;
+      await conn.destroy();
+      this.connection = undefined;
     }
   }
 
-  public async schemaMigration(): Promise<void> {
+  public async migrateLatest(): Promise<void> {
     const conn = await this.getConnection();
     await conn.migrate.latest({
       directory: path.resolve(__dirname, "./migrations")
     });
   }
 
-  public makeMigration(name: string) {
+  public async rollback(): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.migrate.rollback({
+      directory: path.resolve(__dirname, "./migrations")
+    });
+  }
+
+  public async makeSeed(name: string, dir: string): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.seed.make(name, { directory: dir });
+  }
+
+  public async seed(directory: string): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.seed.run({ directory });
+  }
+
+  public makeMigration(name: string): Promise<any> {
     if (!name) {
       return Promise.reject(
         new Error("A name must be specified for the generated migration")
@@ -87,7 +105,7 @@ export async function down(db: knex): Promise<void> {
     fs.writeFileSync(filename, content);
   }
 
-  private async creatConnection(): Promise<Connection> {
+  private async createConnection(): Promise<Connection> {
     const config: knex.Config = {
       client: "pg",
       connection: {

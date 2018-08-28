@@ -9,29 +9,29 @@ import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
 import * as Paths from "../lib/paths";
 
-const cmd = process.argv[2] || "watch";
+const cmd = process.argv[2] || "build";
 const isProduction = process.env.NODE_ENV === "production";
 
 const config: Webpack.Configuration = {
   target: "node",
-  devtool: false,
-  entry: { server: Paths.appServerIndex },
+  devtool: "inline-source-map",
+  entry: Paths.appServerIndex,
   output: {
-    filename: "main.js",
+    filename: "server.js",
     path: Paths.appServerBuild
   },
   resolve: {
     extensions: [".js", ".json", ".ts"],
     plugins: [new TsconfigPathsPlugin({ configFile: Paths.appTsServerConfig })]
   },
+  mode: isProduction ? "production" : "development",
   module: {
     rules: [
       {
         test: /\.ts$/,
-        exclude: [/\.(spec|test).(ts|tsx)$/],
         use: [
           {
-            loader: require.resolve("ts-loader"),
+            loader: "ts-loader",
             options: {
               // disable type checker - we will use it in fork plugin
               transpileOnly: true
@@ -43,7 +43,6 @@ const config: Webpack.Configuration = {
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({
-      async: true,
       watch: Paths.appSrc,
       tsconfig: Paths.appTsServerConfig,
       tslint: Paths.appTsLint
@@ -51,40 +50,62 @@ const config: Webpack.Configuration = {
   ]
 };
 
-const init = async (): Promise<void> => {
+enum Command {
+  Build = "build",
+  Watch = "watch"
+}
+
+async function build(compiler: Webpack.Compiler): Promise<void> {
+  compiler.run((err, stats) => {
+    if (err) {
+      console.log("Webpack error:", err);
+    }
+  });
+}
+
+async function watch(compiler: Webpack.Compiler) {
+  const { path, filename } = compiler.options.output;
+  const output = Path.resolve(path, filename);
+  let running = false;
+
+  const watching = compiler.watch({}, (err, stats) => {
+    if (err) {
+      console.log("Webpack error:", err);
+    }
+    if (running) {
+      Nodemon.emit("restart");
+      console.log("Restarting server!");
+    } else {
+      Nodemon({ script: output });
+      running = true;
+    }
+  });
+
+  ["SIGINT", "SIGTERM"].forEach(sig => {
+    process.on(sig as any, () => {
+      watching.close(() => {});
+      Nodemon.emit("quit");
+      process.exit();
+    });
+  });
+}
+
+async function init(): Promise<void> {
   const compiler = Webpack(config);
-  if (cmd === "build") {
-    compiler.run(() => {
+  switch (cmd) {
+    case Command.Watch: {
+      console.log("watching");
+      await watch(compiler);
+      break;
+    }
+    case Command.Build:
+    default:
       console.log("building");
-    });
-  } else if (cmd === "watch") {
-    const { path, filename } = compiler.options.output;
-    const output = Path.resolve(path, filename);
-    let running = false;
-
-    const watching = compiler.watch({}, (err, stats) => {
-      if (err) {
-        console.log("Webpack error:", err);
-      }
-      if (running) {
-        Nodemon.emit("restart");
-        console.log("Restarting server!");
-      } else {
-        Nodemon({ script: output });
-        running = true;
-      }
-    });
-
-    ["SIGINT", "SIGTERM"].forEach(sig => {
-      process.on(sig as any, () => {
-        watching.close(() => {});
-        Nodemon.emit("quit");
-        process.exit();
-      });
-    });
-  } else {
-    console.log("Please run either `yarn server build` or `yarn server watch`");
+      await build(compiler);
+      break;
   }
-};
+}
 
-init();
+init().catch(e => {
+  console.log("Error: ", e);
+});
