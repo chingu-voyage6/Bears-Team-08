@@ -1,21 +1,58 @@
-import { Database } from "./database";
+import { Database, Connection } from "./database";
 import * as Config from "../config";
+
+let database: Database;
+let conn: Connection;
+beforeAll(async () => {
+  database = new Database(Config.dbConfig);
+  conn = await database.getConnection();
+});
+
+afterAll(async () => {
+  await database.close();
+});
 
 describe("PostgreSQL api", async () => {
   it("should be able to connect to a PostgreSQL Server", async () => {
-    const db = new Database(Config.dbConfig);
-    expect(db.getConnection).toBeTruthy();
+    expect(database.getConnection).toBeTruthy();
   });
 
-  it("should create migratations", async () => {
-    const db = new Database(Config.dbConfig);
-    const conn = await db.getConnection();
-    await db.migrateLatest();
-    const query = conn.table("information_schema.tables").select("table_name");
-    const rows = (await query)
-      .map(row => row.table_name)
-      .filter(table => table === "user");
-    expect(rows).toEqual(["a", "b"]);
-    await db.rollback();
+  describe("migrations", async () => {
+    it("should correctly migrate", async () => {
+      await database.migrateLatest();
+      const rows = await conn
+        .table("information_schema.tables")
+        .where("table_name", "user");
+      expect(rows.length).toEqual(1);
+    });
+
+    it("should not error on multiple migrations", async () => {
+      await database.migrateLatest();
+      await database.migrateLatest();
+      await database.migrateLatest();
+      const rows = await conn
+        .table("information_schema.tables")
+        .where("table_name", "user");
+      expect(rows.length).toEqual(1);
+    });
+
+    it("should correctly teardown", async () => {
+      await database.migrateLatest();
+      await database.rollback();
+      const rows = await conn
+        .table("information_schema.tables")
+        .where("table_name", "user");
+      expect(rows.length).toEqual(0);
+    });
+
+    it("should not error on multiple teardowns", async () => {
+      await database.rollback();
+      await database.rollback();
+      await database.rollback();
+      const rows = await conn
+        .table("information_schema.tables")
+        .where("table_name", "user");
+      expect(rows.length).toEqual(0);
+    });
   });
 });

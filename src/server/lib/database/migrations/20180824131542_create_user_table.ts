@@ -23,6 +23,5 @@ async function migrateUserTable(db: knex): Promise<void> {
 }
 
 export async function down(db: knex): Promise<void> {
-  const tables = ["user"];
-  await Promise.all(tables.map(db.schema.dropTableIfExists));
+  await db.schema.dropTable("user");
 }
