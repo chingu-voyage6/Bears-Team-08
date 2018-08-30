@@ -82,7 +82,6 @@ const config: Webpack.Configuration = {
               }
             ]
           },
-
           {
             exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
             loader: require.resolve("file-loader"),

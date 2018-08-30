@@ -1,27 +1,27 @@
 import * as knex from "knex";
-import * as fs from "fs";
-import * as path from "path";
+import * as Fs from "fs";
+import * as Path from "path";
 
 import { newLogger } from "../logger";
 
 const logger = newLogger({ file: "lib/database.ts" });
 
 export type Configuration = {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-  debug: boolean;
+  host?: string;
+  port?: number;
+  user?: string;
+  password?: string;
+  database?: string;
+  debug?: boolean;
 };
 
 export type Connection = knex;
 export type Transaction = knex.Transaction;
 
-const migrationPath = path.resolve(__dirname, "./migrations");
+export const migrationPath = Path.resolve(__dirname, "./migrations");
 
 export class Database {
-  private config: Configuration;
+  protected config: Configuration;
   private connection: Connection | undefined;
   constructor(config: Configuration) {
     this.config = config;
@@ -56,38 +56,8 @@ export class Database {
     }
   }
 
-  public async migrateLatest(): Promise<void> {
-    const conn = await this.getConnection();
-    await conn.migrate.latest({
-      directory: path.resolve(__dirname, "./migrations")
-    });
-  }
-
-  public async rollback(): Promise<void> {
-    const conn = await this.getConnection();
-    return conn.migrate.rollback({
-      directory: path.resolve(__dirname, "./migrations")
-    });
-  }
-
-  public async makeSeed(name: string, dir: string): Promise<void> {
-    const conn = await this.getConnection();
-    return conn.seed.make(name, { directory: dir });
-  }
-
-  public async seed(directory: string): Promise<void> {
-    const conn = await this.getConnection();
-    return conn.seed.run({ directory });
-  }
-
-  public makeMigration(name: string): Promise<any> {
-    if (!name) {
-      return Promise.reject(
-        new Error("A name must be specified for the generated migration")
-      );
-    }
-
-    const filename = path.resolve(
+  public async makeMigration(name: string): Promise<void> {
+    const filename = Path.resolve(
       migrationPath,
       `${yyyymmddhhmmss()}_${name}.ts`
     );
@@ -102,25 +72,84 @@ export async function down(db: knex): Promise<void> {
 }
 `;
 
-    fs.writeFileSync(filename, content);
+    await new Promise((resolve, reject) => {
+      Fs.writeFile(filename, content, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 
-  private async createConnection(): Promise<Connection> {
+  // This only works for tests and with ts-node
+  public async migrateLatest(): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.migrate.latest({ directory: migrationPath });
+  }
+
+  // This only works for tests and with ts-node
+  public async rollback(): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.migrate.rollback({ directory: migrationPath });
+  }
+
+  // This only works for tests and with ts-node
+  public async makeSeed(name: string, dir: string): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.seed.make(name, { directory: dir });
+  }
+
+  // This only works for tests and with ts-node
+  public async seed(): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.seed.run({ directory: Path.resolve(__dirname, "seeds") });
+  }
+
+  protected async createConnection(): Promise<Connection> {
     const config: knex.Config = {
       client: "pg",
-      connection: {
-        host: this.config.host,
-        port: this.config.port,
-        user: this.config.user,
-        password: this.config.password,
-        database: this.config.database
-      },
       debug: this.config.debug,
+      connection: this.config,
       migrations: {
         tableName: "migrations"
       }
     };
+
     const db = knex(config);
+
+    // Test database connectivity
+    await db.raw("select 1").timeout(500);
+
+    return db;
+  }
+}
+
+export class TestDatabase extends Database {
+  private debug: boolean;
+  constructor(debug: boolean = false) {
+    super(null);
+    this.debug = debug;
+  }
+
+  public async seed(): Promise<void> {
+    const conn = await this.getConnection();
+    return conn.seed.run({
+      directory: Path.resolve(__dirname, "seeds", "testing")
+    });
+  }
+
+  protected async createConnection(): Promise<Connection> {
+    const db = knex({
+      client: "sqlite3",
+      debug: this.debug,
+      connection: { filename: ":memory:" },
+      useNullAsDefault: true,
+      migrations: {
+        tableName: "migrations"
+      }
+    });
 
     // Test database connectivity
     await db.raw("select 1").timeout(500);

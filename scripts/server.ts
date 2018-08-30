@@ -1,5 +1,4 @@
 /* tslint:disable:no-console */
-import * as fs from "fs";
 import * as Path from "path";
 
 import * as Webpack from "webpack";

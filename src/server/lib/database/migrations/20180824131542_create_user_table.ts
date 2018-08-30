@@ -14,14 +14,16 @@ async function migrateUserTable(db: knex): Promise<void> {
         .unique();
       t.string("first_name");
       t.string("last_name");
-      t.string("passwd", 256);
+      t.string("hash", 256);
       t.string("email", 64).unique();
-      t.enum("role", ["user", "admin"]).notNullable();
+      t.enum("role", ["user", "admin"])
+        .notNullable()
+        .defaultTo("user");
       t.timestamps();
     });
   }
 }
 
 export async function down(db: knex): Promise<void> {
-  await db.schema.dropTable("user");
+  await db.schema.dropTableIfExists("user");
 }

@@ -37,7 +37,7 @@ export const dbConfig: Configuration = {
   user: process.env.DB_USER || "quick-draw",
   password: process.env.DB_PASS || "",
   database: getDatabaseName(),
-  debug: isDev
+  debug: process.env.DB_DEBUG === "true"
 };
 
 function getDatabaseName(): string {
