@@ -1,5 +1,4 @@
 import { Role } from "@shared/contract";
-
 import { User } from "../entities";
 import { Database } from "../lib/database";
 import { NotFoundError, ValidationError } from "../errors";
@@ -52,25 +51,27 @@ export class UserRepository {
   }
 
   public async insert(user: User): Promise<User> {
-    user.createdAt = new Date();
-    user.updatedAt = new Date();
+    const now = new Date();
 
     const conn = await this.db.getConnection();
-    const rawUser: RawUser = {
-      email: user.email,
-      hash: user.hash,
-      role: user.role,
-      first_name: user.firstName,
-      last_name: user.lastName
-    };
+    const rawUser: RawUser = {};
 
     try {
-      const res = await conn.table(this.TABLE).insert(rawUser);
-      user.id = res[0];
+      const res = await conn.table(this.TABLE).insert({
+        username: user.username,
+        hash: user.hash,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        email: user.email,
+        role: user.role || Role.user,
+        created_at: now,
+        updated_at: now
+      });
+      user = this.transform(res);
       return user;
     } catch (err) {
-      if (err.code === "ER_DUP_ENTRY") {
-        throw new ValidationError(`Email ${user.username} already exists`);
+      if (err.code === "ER_DUP_ENTRY" || err.code === "SQLITE_CONSTRAINT") {
+        throw new ValidationError(`Username ${user.username} already exists`);
       }
 
       throw err;
@@ -78,16 +79,20 @@ export class UserRepository {
   }
 
   public async update(user: User): Promise<User> {
-    user.updatedAt = new Date();
+    const now = new Date();
+    user.updatedAt = now;
 
     const conn = await this.db.getConnection();
-
-    await conn.table(this.TABLE).update({
-      email: user.email,
-      first_name: user.firstName,
-      last_name: user.lastName,
-      hash: user.hash
-    });
+    await conn
+      .table(this.TABLE)
+      .update({
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        role: user.role,
+        updated_at: now
+      })
+      .where("username", user.username);
 
     return user;
   }
@@ -129,8 +134,8 @@ export class UserRepository {
       lastName: row.last_name,
       hash: row.hash,
       role: row.role,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at
+      createdAt: new Date(row.created_at),
+      updatedAt: new Date(row.updated_at)
     };
   }
 }
