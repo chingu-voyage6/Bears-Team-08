@@ -1,17 +1,22 @@
 import { Database, TestDatabase, Connection } from "./database";
 import * as Config from "../config";
 
-describe("PostgreSQL api", async () => {
+describe("Database api", async () => {
   let database: Database;
   let conn: Connection;
-  beforeEach(async () => {
+
+  beforeAll(async () => {
     // database = new Database(Config.dbConfig);
     database = new TestDatabase();
     conn = await database.getConnection();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await database.close();
+  });
+
+  beforeEach(async () => {
+    await database.rollback();
   });
 
   it("should be able to connect to a PostgreSQL Server", async () => {
@@ -53,14 +58,11 @@ describe("PostgreSQL api", async () => {
 
   describe("for seeding", async () => {
     beforeEach(async () => {
-      await database.migrateLatest();
-    });
-    afterEach(async () => {
       await database.rollback();
+      await database.migrateLatest();
     });
 
     it("should correctly seed the database", async () => {
-      await database.migrateLatest();
       const conn = await database.getConnection();
 
       const query = await conn.table("user").select();
@@ -68,7 +70,7 @@ describe("PostgreSQL api", async () => {
 
       await database.seed();
       const users = await conn.table("user").select();
-      const expectedUsernames = ["jack", "RUjack"];
+      const expectedUsernames = ["jack", "jill", "abby"];
       const usernames = users.map(u => u.username);
       for (const username of expectedUsernames) {
         expect(usernames).toContain(username);

@@ -7,15 +7,10 @@
     "client": "ts-node scripts/client.ts",
     "client:build": "npm run client build",
     "client:watch": "npm run client watch",
-    "server": "ts-node scripts/server.ts",
-    "server:build": "npm run server build",
-    "server:watch": "npm run server watch",
+    "server": "nodemon src/server/index.ts",
+    "server:prod": "NODE_ENV=production nodemon src/server/index.ts",
     "migrate": "ts-node scripts/migrations.ts",
-    "test": "NODE_ENV=testing jest --config jestConfig.js",
-    "testold": "ts-node -P config/tsconfig.test.json scripts/test.ts",
-    "prod": "npm run build && PORT=3000 NODE_ENV=production npm run start-server",
-    "build": "node scripts/build.js",
-    "old-test": "node scripts/test.js --env=jsdom"
+    "test": "NODE_ENV=testing jest --config jestConfig.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
@@ -52,7 +47,6 @@
     "@types/koa-router": "^7.0.31",
     "@types/lodash": "^4.14.116",
     "@types/mini-css-extract-plugin": "^0.2.0",
-    "@types/mocha": "^5.2.5",
     "@types/node": "^10.3.1",
     "@types/pino": "^4.16.1",
     "@types/react": "^16.4.6",
@@ -86,7 +80,6 @@
     "jest-canvas-mock": "^1.1.0",
     "jest-util": "^23.4.0",
     "mini-css-extract-plugin": "^0.4.1",
-    "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
     "object-assign": "^4.1.1",
     "postcss-loader": "^2.1.5",
@@ -119,7 +112,7 @@
       "node_modules"
     ],
     "execMap": {
-      "ts": "ts-node -P config/tsconfig.server.json"
+      "ts": "ts-node -r tsconfig-paths/register -P config/tsconfig.server.json"
     }
   },
   "jest": {

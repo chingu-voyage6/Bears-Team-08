@@ -4,6 +4,10 @@ export async function up(db: knex): Promise<void> {
   await migrateUserTable(db);
 }
 
+export async function down(db: knex): Promise<void> {
+  await db.schema.dropTableIfExists("user");
+}
+
 async function migrateUserTable(db: knex): Promise<void> {
   const exists = await db.schema.hasTable("user");
   if (!exists) {
@@ -22,8 +26,4 @@ async function migrateUserTable(db: knex): Promise<void> {
       t.timestamps();
     });
   }
-}
-
-export async function down(db: knex): Promise<void> {
-  await db.schema.dropTableIfExists("user");
 }

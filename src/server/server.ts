@@ -9,8 +9,11 @@ import { Logger } from "./lib/logger";
 import { Database } from "./lib/database";
 import { UserManager } from "./managers";
 import { UserRepository } from "./repositories";
+import * as Apps from "./apps";
+import { BCryptHasher } from "./lib/crypto";
+import { Authenticator, JWTAuthenticator } from "./lib/authentication";
 
-export type AppContainer = {
+export type ServiceContainer = {
   db: Database;
   webLogger: Logger;
   repositories: {
@@ -19,13 +22,19 @@ export type AppContainer = {
   managers: {
     user: UserManager;
   };
+  lib: {
+    authenticator: Authenticator;
+    hasher: BCryptHasher;
+  };
 };
 
-export const createAppContainer = (
+export const createServiceContainer = (
   db: Database,
   webLogger: Logger
-): AppContainer => {
+): ServiceContainer => {
   const userRepo = new UserRepository(db);
+  const authenticator = new JWTAuthenticator(userRepo);
+  const hasher = new BCryptHasher(10);
 
   return {
     db,
@@ -33,8 +42,12 @@ export const createAppContainer = (
     repositories: {
       user: userRepo
     },
+    lib: {
+      authenticator,
+      hasher
+    },
     managers: {
-      user: new UserManager(userRepo)
+      user: new UserManager(userRepo, hasher, authenticator)
     }
   };
 };
@@ -45,17 +58,6 @@ export class AppServer {
 
   constructor(app: Koa) {
     this.app = app;
-    // this.db = args.db;
-    // this.logger = args.logger;
-
-    // this.app = Express();
-    // this.app.use(bodyParser.urlencoded({ extended: false })); // allow data from a post
-    // this.app.use(bodyParser.json());
-    // this.app.use(Config.baseRoute, routes);
-    // if (Config.isProduction) {
-    //   this.app.use("/", Express.static(Config.staticFiles));
-    //   this.app.use("/:drawingId", Express.static(Config.indexFile));
-    // }
   }
 
   public listen(port: number, cb?: () => void): Server {
@@ -97,19 +99,22 @@ export class AppServer {
   }
 }
 
-export function createServer(args: AppContainer): AppServer {
+export function createServer(container: ServiceContainer): AppServer {
   const app = new Koa();
   const server = new AppServer(app);
 
   app.use(Helmet());
   app.use(Middlewares.responseTime);
-  app.use(Middlewares.logRequest(args.webLogger));
-  app.use(Middlewares.errorHandler(args.webLogger));
+  app.use(Middlewares.logRequest(container.webLogger));
+  app.use(Middlewares.errorHandler(container.webLogger));
 
   if (Config.isProduction) {
     // this.app.use("/", Express.static(Config.staticFiles));
     // this.app.use("/:drawingId", Express.static(Config.indexFile));
   }
+
+  Apps.initUsers(app, container);
+  Apps.initDrawing(app, container);
 
   return server;
 }

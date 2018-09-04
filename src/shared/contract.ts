@@ -1,10 +1,10 @@
 export interface UserJSON {
-  id: string
-  username: string;
-  firstName: string;
-  lastName: string;
+  id?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
-  role: Role;
+  role?: Role;
 }
 
 export enum Role {
@@ -13,8 +13,8 @@ export enum Role {
 }
 
 export interface AuthUserJSON {
-  id: string;
-  username: string;
+  id?: string;
+  username?: string;
   email?: string;
-  role: Role;
+  role?: Role;
 }

@@ -1,8 +1,8 @@
 import {
   AppServer,
   createServer,
-  AppContainer,
-  createAppContainer
+  ServiceContainer,
+  createServiceContainer
 } from "./server";
 import * as Config from "./config";
 import { baseLogger } from "./lib/logger";
@@ -21,7 +21,7 @@ export async function init() {
       db.close();
     });
 
-    const container = createAppContainer(db, webLogger);
+    const container = createServiceContainer(db, webLogger);
     const app = createServer(container);
     components.push(() => {
       app.closeServer();
@@ -34,7 +34,7 @@ export async function init() {
     registerProcessEvents(components);
   } catch (e) {
     let exitCode = 0;
-    for (const c of components) {
+    for (const c of components.reverse()) {
       const code = await shutdown(c);
       exitCode = code;
     }

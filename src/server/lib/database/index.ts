@@ -107,6 +107,12 @@ export async function down(db: knex): Promise<void> {
     return conn.seed.run({ directory: Path.resolve(__dirname, "seeds") });
   }
 
+  public async truncate(tables: string[]): Promise<void> {
+    const conn = await this.getConnection();
+    Promise.all(tables.map(async table => conn.raw(`DELETE FROM ${table}`)));
+    return;
+  }
+
   protected async createConnection(): Promise<Connection> {
     const config: knex.Config = {
       client: "pg",
