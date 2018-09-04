@@ -22,7 +22,6 @@
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^4.0.0",
     "koa-router": "^7.4.0",
-    "lodash": "^4.17.10",
     "mongoose": "^5.2.5",
     "pg": "^7.4.3",
     "pino": "^5.1.1",
@@ -45,7 +44,6 @@
     "@types/koa-bodyparser": "^5.0.1",
     "@types/koa-helmet": "^3.1.2",
     "@types/koa-router": "^7.0.31",
-    "@types/lodash": "^4.14.116",
     "@types/mini-css-extract-plugin": "^0.2.0",
     "@types/node": "^10.3.1",
     "@types/pino": "^4.16.1",
@@ -53,18 +51,11 @@
     "@types/react-dom": "^16.0.6",
     "@types/react-redux": "^6.0.3",
     "@types/react-test-renderer": "^16.0.1",
-    "@types/redux-mock-store": "^1.0.0",
     "@types/sinon": "^5.0.1",
     "@types/supertest": "^2.0.5",
     "@types/webpack": "^4.4.10",
     "@types/webpack-serve": "^2.0.0",
     "autoprefixer": "^8.6.5",
-    "babel-core": "^6.26.3",
-    "babel-jest": "^23.4.2",
-    "babel-loader": "^7.1.5",
-    "babel-preset-react-app": "^3.1.2",
-    "babel-runtime": "^6.26.0",
-    "body-parser": "^1.18.3",
     "canvas": "^1.6.11",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "concurrently": "^3.6.1",
@@ -78,8 +69,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.5.0",
     "jest-canvas-mock": "^1.1.0",
-    "jest-util": "^23.4.0",
-    "mini-css-extract-plugin": "^0.4.1",
     "nodemon": "^1.17.5",
     "object-assign": "^4.1.1",
     "postcss-loader": "^2.1.5",
@@ -101,7 +90,6 @@
     "tslint-config-prettier": "^1.14.0",
     "tslint-react": "^3.6.0",
     "typescript": "^3.0.1",
-    "uglifyjs-webpack-plugin": "^1.2.7",
     "url-loader": "^1.0.1",
     "webpack": "^4.16.5",
     "webpack-serve": "^2.0.2",
@@ -114,43 +102,6 @@
     "execMap": {
       "ts": "ts-node -r tsconfig-paths/register -P config/tsconfig.server.json"
     }
-  },
-  "jest": {
-    "verbose": true,
-    "setupFiles": [
-      "<rootDir>/src/lib/polyfills.ts",
-      "<rootDir>/src/lib/testSetup.ts"
-    ],
-    "testRegex": "src/client/.+\\.(test|spec)\\.(jsx?|tsx?)$",
-    "testURL": "http://localhost",
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|ts)x?$"
-    ],
-    "moduleNameMapper": {
-      "^.+\\.(css|less)$": "identity-obj-proxy",
-      "shared/.*": "<rootDir>/src/$0"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json",
-      "node"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfigFile": "<rootDir>/config/tsconfig.test.json"
-      }
-    }
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
   },
   "eslintConfig": {
     "extends": "react-app"

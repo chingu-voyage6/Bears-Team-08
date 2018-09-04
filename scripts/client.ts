@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
-import * as MiniCssExtractPlugin from "mini-css-extract-plugin";
 import * as Webpack from "webpack";
 import * as WebpackServe from "webpack-serve";
 import ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
@@ -67,11 +66,7 @@ const config: Webpack.Configuration = {
             test: /\.css$/,
             exclude: /node_modules/,
             use: [
-              {
-                loader: isProduction
-                  ? (MiniCssExtractPlugin.loader as any)
-                  : "style-loader"
-              },
+              { loader: "style-loader" },
               { loader: "css-loader", options: { importLoaders: 1 } },
               {
                 loader: "postcss-loader",
