@@ -1,28 +1,37 @@
 import * as Jwt from "jsonwebtoken";
 
 import * as Config from "../config";
-import { UserJSON, AuthUserJSON } from "@shared/contract";
+import { AuthUserJSON } from "@shared/contract";
+import { User } from "../entities";
 import { UserRepository } from "../repositories";
 import { UnauthorizedError } from "../errors";
 
 export interface Authenticator {
-  validate(token: string): Promise<AuthUserJSON>;
-  authenticate(user: UserJSON): string;
+  validate(token: string): Promise<User>;
+  signature(user: User): string;
 }
+
+export type JWTAuthenticatorOptions = Jwt.SignOptions & {};
 
 export class JWTAuthenticator implements Authenticator {
   private userRepo: UserRepository;
   private secret: string;
+  private options: JWTAuthenticatorOptions;
 
-  constructor(userRepo: UserRepository) {
+  constructor(
+    userRepo: UserRepository,
+    secretKey: string,
+    options?: JWTAuthenticatorOptions
+  ) {
     this.userRepo = userRepo;
-    this.secret = Config.secretKey;
+    this.secret = secretKey;
+    this.options = options;
   }
 
-  public async validate(token: string): Promise<AuthUserJSON> {
+  public async validate(token: string): Promise<User> {
     try {
-      const decode: any = Jwt.verify(token, this.secret);
-      const user = await this.userRepo.findByEmail(decode.email);
+      const decode = Jwt.verify(token, this.secret) as AuthUserJSON;
+      const user = await this.userRepo.findByUsername(decode.username);
 
       return user;
     } catch (err) {
@@ -30,13 +39,15 @@ export class JWTAuthenticator implements Authenticator {
     }
   }
 
-  public authenticate(user: UserJSON): string {
+  public signature(user: User): string {
     return Jwt.sign(
-      { id: user.id, email: user.username, role: user.role },
-      this.secret,
       {
-        expiresIn: 60 * 60
-      }
+        id: user.id,
+        username: user.username,
+        role: user.role
+      },
+      this.secret,
+      this.options
     );
   }
 }

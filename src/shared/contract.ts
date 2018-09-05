@@ -15,6 +15,5 @@ export enum Role {
 export interface AuthUserJSON {
   id?: string;
   username?: string;
-  email?: string;
   role?: Role;
 }

@@ -3,6 +3,7 @@ import { UserRepository } from "../repositories";
 import { Hasher } from "../lib/crypto";
 import { Authenticator } from "../lib/authentication";
 import { CreateUser } from "../apps/users/model";
+import { ValidationError } from "../errors";
 
 export class UserManager {
   private repo: UserRepository;
@@ -15,20 +16,56 @@ export class UserManager {
     this.auth = auth;
   }
 
-  public async findByUsername(username: string): Promise<User> {
+  public findByUsername = async (username: string): Promise<User> => {
     return this.repo.findByUsername(username);
-  }
+  };
 
-  public async findByEmail(email: string): Promise<User> {
+  public findByEmail = async (email: string): Promise<User> => {
     return this.repo.findByEmail(email);
-  }
+  };
 
-  public async create(userJSON: CreateUser): Promise<User> {
+  public create = async (userJSON: CreateUser): Promise<User> => {
     const hashPassword = await this.hasher.hashPassword(userJSON.password);
     return null;
-  }
+  };
 
-  public async login(username: string, password: string): Promise<any> {
-    return null;
-  }
+  public login = async (
+    username: string,
+    password: string
+  ): Promise<string> => {
+    const user = await this.repo.findByUsername(username);
+
+    if (await this.hasher.verifyPassword(password, user.hash)) {
+      return this.auth.signature(user);
+    }
+
+    throw new ValidationError("Wrong credentials");
+  };
+
+  public update = async (user: User): Promise<User> => {
+    return this.repo.update(user);
+  };
+
+  public changePassword = async (
+    username: string,
+    oldPassword,
+    newPassword
+  ): Promise<void> => {
+    const user = await this.repo.findByUsername(username);
+    const validPassowrd = await this.hasher.verifyPassword(
+      oldPassword,
+      user.hash
+    );
+
+    if (!validPassowrd) {
+      throw new ValidationError("Old password is invalid");
+    }
+
+    const hashedPassword = await this.hasher.hashPassword(newPassword);
+    return this.repo.changePassword(username, hashedPassword);
+  };
+
+  public delete = async (userId: string) => {
+    return this.repo.delete(userId);
+  };
 }

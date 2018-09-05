@@ -5,7 +5,7 @@ import * as Crypto from "../lib/crypto";
 import { Role } from "@shared/contract";
 import { ValidationError } from "../errors";
 
-describe("User Repository", () => {
+describe("UserRepository", () => {
   let database: Database;
   let repo: UserRepository;
 
