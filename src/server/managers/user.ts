@@ -26,7 +26,15 @@ export class UserManager {
 
   public create = async (userJSON: CreateUser): Promise<User> => {
     const hashPassword = await this.hasher.hashPassword(userJSON.password);
-    return null;
+    const user: User = {
+      username: userJSON.username,
+      firstName: userJSON.firstName,
+      lastName: userJSON.lastName,
+      email: userJSON.email,
+      hash: hashPassword
+    };
+
+    return this.repo.insert(user);
   };
 
   public login = async (

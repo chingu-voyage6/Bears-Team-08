@@ -33,7 +33,9 @@ export const createServiceContainer = (
   webLogger: Logger
 ): ServiceContainer => {
   const userRepo = new UserRepository(db);
-  const authenticator = new JWTAuthenticator(userRepo);
+  const authenticator = new JWTAuthenticator(userRepo, Config.secretKey, {
+    expiresIn: "30m"
+  });
   const hasher = new BCryptHasher(10);
 
   return {
