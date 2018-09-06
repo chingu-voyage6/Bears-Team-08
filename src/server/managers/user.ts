@@ -1,8 +1,7 @@
-import { User } from "../entities";
+import { User, CreateUser } from "../entities";
 import { UserRepository } from "../repositories";
 import { Hasher } from "../lib/crypto";
 import { Authenticator } from "../lib/authentication";
-import { CreateUser } from "../apps/users/model";
 import { ValidationError } from "../errors";
 
 export class UserManager {

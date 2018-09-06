@@ -12,6 +12,7 @@ export function logRequest(logger: Logger): IMiddleware {
     const logData: any = {
       method: ctx.method,
       path: ctx.path,
+      ip: ctx.ip,
       statusCode: ctx.status,
       timeMs: Date.now() - start
     };

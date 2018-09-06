@@ -1,58 +1,11 @@
-import { Server } from "http";
+import { Server, IncomingMessage, ServerResponse } from "http";
+import { Http2ServerRequest, Http2ServerResponse } from "http2";
 
 import * as Koa from "koa";
 import * as Helmet from "koa-helmet";
 
-import * as Config from "./config";
 import * as Middlewares from "./middlewares";
-import { Logger } from "./lib/logger";
-import { Database } from "./lib/database";
-import { UserManager } from "./managers";
-import { UserRepository } from "./repositories";
-import * as Apps from "./apps";
-import { BCryptHasher } from "./lib/crypto";
-import { Authenticator, JWTAuthenticator } from "./lib/authentication";
-
-export type ServiceContainer = {
-  db: Database;
-  webLogger: Logger;
-  repositories: {
-    user: UserRepository;
-  };
-  managers: {
-    user: UserManager;
-  };
-  lib: {
-    authenticator: Authenticator;
-    hasher: BCryptHasher;
-  };
-};
-
-export const createServiceContainer = (
-  db: Database,
-  webLogger: Logger
-): ServiceContainer => {
-  const userRepo = new UserRepository(db);
-  const authenticator = new JWTAuthenticator(userRepo, Config.secretKey, {
-    expiresIn: "30m"
-  });
-  const hasher = new BCryptHasher(10);
-
-  return {
-    db,
-    webLogger,
-    repositories: {
-      user: userRepo
-    },
-    lib: {
-      authenticator,
-      hasher
-    },
-    managers: {
-      user: new UserManager(userRepo, hasher, authenticator)
-    }
-  };
-};
+import { Application } from "./application";
 
 export class AppServer {
   private app: Koa;
@@ -67,8 +20,11 @@ export class AppServer {
     return this.server;
   }
 
-  public get getServer() {
-    return this.server;
+  public callback(): (
+    req: IncomingMessage | Http2ServerRequest,
+    res: ServerResponse | Http2ServerResponse
+  ) => void {
+    return this.app.callback();
   }
 
   public closeServer(): Promise<void> {
@@ -101,22 +57,24 @@ export class AppServer {
   }
 }
 
-export function createServer(container: ServiceContainer): AppServer {
+export function createServer(application: Application): AppServer {
   const app = new Koa();
   const server = new AppServer(app);
 
   app.use(Helmet());
+
   app.use(Middlewares.responseTime);
-  app.use(Middlewares.logRequest(container.webLogger));
-  app.use(Middlewares.errorHandler(container.webLogger));
+  app.use(Middlewares.logRequest(application.logger));
+  app.use(Middlewares.errorHandler(application.logger));
 
-  if (Config.isProduction) {
-    // this.app.use("/", Express.static(Config.staticFiles));
-    // this.app.use("/:drawingId", Express.static(Config.indexFile));
+  // if (Config.isProduction) {
+  //   // this.app.use("/", Express.static(Config.staticFiles));
+  //   // this.app.use("/:drawingId", Express.static(Config.indexFile));
+  // }
+
+  for (const component of application.components) {
+    component(app);
   }
-
-  Apps.initUsers(app, container);
-  Apps.initDrawing(app, container);
 
   return server;
 }

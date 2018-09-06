@@ -22,7 +22,7 @@ function toHTTPCode(kind: ErrorKind) {
 }
 
 export function errorHandler(logger: Logger): IMiddleware {
-  return async (ctx: Context, next: () => Promise<any>) => {
+  return async (ctx, next) => {
     try {
       await next();
     } catch (err) {

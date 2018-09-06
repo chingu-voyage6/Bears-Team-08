@@ -1,80 +1,60 @@
-import {
-  AppServer,
-  createServer,
-  ServiceContainer,
-  createServiceContainer
-} from "./server";
+import { AppServer, createServer } from "./server";
 import * as Config from "./config";
 import { baseLogger } from "./lib/logger";
 import { Database } from "./lib/database";
-
-const logger = baseLogger;
+import { Application } from "./application";
 
 export async function init() {
-  const components = [];
+  const app = new Application({
+    dbConfig: Config.dbConfig,
+    secretKey: Config.secretKey
+  });
 
   try {
-    const webLogger = baseLogger.child({ name: "webserver" });
+    await app.init();
+  } catch (err) {
+    app.logger.error("An error occured while initializing application:", err);
+  }
 
-    const db = new Database(Config.dbConfig);
-    components.push(() => {
-      db.close();
+  const server = createServer(app);
+
+  try {
+    server.listen(Config.port, () => {
+      app.logger.info(`Application running on port ${Config.port}`);
     });
-
-    const container = createServiceContainer(db, webLogger);
-    const app = createServer(container);
-    components.push(() => {
-      app.closeServer();
-    });
-
-    app.listen(Config.port, () => {
-      logger.info(`Application running on port: ${Config.port}`);
-    });
-
-    registerProcessEvents(components);
-  } catch (e) {
-    let exitCode = 0;
-    for (const c of components.reverse()) {
-      const code = await shutdown(c);
-      exitCode = code;
-    }
-    throw e;
+    registerProcessEvents(server, app);
+  } catch (err) {
+    app.logger.error("An error occured while initializing application: ", err);
+    await app.shutdown();
+    await server.closeServer();
   }
 }
 
-function registerProcessEvents(components: Array<() => Promise<void>>) {
+function registerProcessEvents(server: AppServer, app: Application) {
   process.on("uncaughtException", (err: Error) => {
-    logger.error("UncaughtException:", err);
+    app.logger.error("UncaughtException:", err);
   });
 
   process.on("unhandledRejection", (err: Error) => {
-    logger.error("UnhandledRejection:", err);
+    app.logger.error("UnhandledRejection:", err);
   });
 
-  process.on("SIGTERM", async () => {
-    logger.info("Starting graceful shutdown");
+  const signals = ["SIGTERM", "SIGINT"];
+  signals.forEach(sig =>
+    process.on(sig as any, async () => {
+      app.logger.info("Starting graceful shutdown");
 
-    let exitCode = 0;
-    for (const c of components) {
-      const code = await shutdown(c);
-      if (code > 0) {
-        exitCode = code;
+      let exitCode = 0;
+      try {
+        app.shutdown();
+      } catch (err) {
+        exitCode = 1;
       }
-    }
-    process.exit(exitCode);
-  });
-}
-
-async function shutdown(component: () => Promise<void>): Promise<number> {
-  try {
-    await component();
-  } catch (err) {
-    return 1;
-  }
-  return 0;
+      process.exit(exitCode);
+    })
+  );
 }
 
 init().catch(err => {
-  logger.error("An error occured while initializing application: ", err);
   process.emit("SIGTERM");
 });

@@ -4,46 +4,49 @@ import * as Router from "koa-router";
 
 import * as Middleware from "../../middlewares";
 import { UserController } from "./controller";
-import { ServiceContainer } from "../../server";
+import { Application } from "../../application";
 import { Role } from "@shared/contract";
+import { Component } from "..";
 
-export function init(server: Koa, container: ServiceContainer) {
+export function userComponent(application: Application): Component {
   const router = new Router({ prefix: "/api/v1/users" });
-  const controller = new UserController(container.managers.user);
+  const controller = new UserController(application.managers.user);
 
-  router.get(
-    "/me",
-    Middleware.authentication(container.lib.authenticator),
-    Middleware.authorization([Role.user, Role.admin]),
-    controller.get
-  );
+  // router.get("/", bodyParser(), controller.)
 
   router.post("/", bodyParser(), controller.create);
-
-  router.post("/login", bodyParser(), controller.login);
 
   router.put(
     "/",
     bodyParser(),
-    Middleware.authentication(container.lib.authenticator),
+    Middleware.authentication(application.lib.authenticator),
     Middleware.authorization([Role.user, Role.admin]),
     controller.update
+  );
+
+  router.post("/login", bodyParser(), controller.login);
+
+  router.get(
+    "/me",
+    Middleware.authentication(application.lib.authenticator),
+    Middleware.authorization([Role.user, Role.admin]),
+    controller.get
   );
 
   router.put(
     "/password",
     bodyParser(),
-    Middleware.authentication(container.lib.authenticator),
+    Middleware.authentication(application.lib.authenticator),
     Middleware.authorization([Role.user, Role.admin]),
     controller.changePassword
   );
 
   router.delete(
     "/:id",
-    Middleware.authentication(container.lib.authenticator),
+    Middleware.authentication(application.lib.authenticator),
     Middleware.authorization([Role.admin]),
     controller.delete
   );
 
-  server.use(router.routes());
+  return server => server.use(router.routes());
 }

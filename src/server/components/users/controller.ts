@@ -12,14 +12,16 @@ export class UserController {
     this.manager = manager;
   }
 
-  public async create(ctx: Context) {
+  public index = async (ctx: Context) => {};
+
+  public create = async (ctx: Context) => {
     const createUserJSON = ctx.request.body;
     const newUser = await this.manager.create(createUserJSON as CreateUser);
 
     ctx.body = new UserModel(newUser);
     ctx.status = 201;
     ctx.set("location", "/api/v1/users/me");
-  }
+  };
 
   public login = async (ctx: Context) => {
     const body = ctx.request.body as { [key: string]: string };
