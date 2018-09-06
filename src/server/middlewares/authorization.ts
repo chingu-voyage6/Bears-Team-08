@@ -1,12 +1,12 @@
 import { Context } from "koa";
-import { IMiddleware } from "koa-router";
 
+import { Middleware } from ".";
 import { PermissionError } from "../errors";
-import { AuthUserJSON, Role } from "@shared/contract";
+import { User, Role } from "../entities";
 
-export function authorization(roles: Role[]): IMiddleware {
+export function authorization(roles: Role[]): Middleware {
   return async (ctx, next) => {
-    const user: AuthUserJSON = ctx.state.user;
+    const user: User = ctx.state.user;
 
     if (roles.indexOf(user.role) < 0) {
       throw new PermissionError();

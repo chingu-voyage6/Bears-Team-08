@@ -1,14 +1,14 @@
 import { mock, instance, verify, when, reset } from "ts-mockito";
-import { IMiddleware } from "koa-router";
 
-import { Role } from "@shared/contract";
-import { authentication } from "./authentication";
-import { UnauthorizedError } from "../errors";
 import { Authenticator, JWTAuthenticator } from "../lib/authentication";
+import { Middleware } from ".";
+import { Role } from "@shared/contract";
+import { UnauthorizedError } from "../errors";
+import { authentication } from "./authentication";
 
-describe("authentication", () => {
+describe("Authentication middleware", () => {
   let MockAuthenticator: Authenticator;
-  let middleware: IMiddleware;
+  let middleware: Middleware;
 
   beforeEach(() => {
     MockAuthenticator = mock(JWTAuthenticator);
