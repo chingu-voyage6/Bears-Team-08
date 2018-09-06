@@ -1,10 +1,11 @@
 export enum ErrorKind {
-  Internal = 10000,
-  NotFound = 20000,
-  Validation = 30000,
-  FieldValidation = 30001,
-  Unauthorized = 30002,
-  Permission = 30003
+  FieldValidation = 400,
+  Validation = 400,
+  Unauthorized = 401,
+  Forbidden = 403,
+  NotFound = 404,
+  Internal = 500,
+  NotImplemented = 501
 }
 
 export class AppError extends Error {
@@ -19,7 +20,6 @@ export class AppError extends Error {
 
   public toModel() {
     return {
-      code: this.code,
       message: this.message
     };
   }
@@ -46,7 +46,6 @@ export class FieldValidationError extends AppError {
 
   public toModel() {
     return {
-      code: this.code,
       message: this.message,
       fields: this.fields
     };
@@ -59,9 +58,9 @@ export class UnauthorizedError extends AppError {
   }
 }
 
-export class PermissionError extends AppError {
+export class ForbiddenError extends AppError {
   constructor(error?: Error) {
-    super(ErrorKind.Permission, "Permission denied", error);
+    super(ErrorKind.Forbidden, "Permission denied", error);
   }
 }
 
@@ -69,4 +68,10 @@ export interface FieldError {
   message: string;
   kind: string;
   path: string[];
+}
+
+export class NotImplementedError extends AppError {
+  constructor() {
+    super(ErrorKind.NotImplemented, "Not implemented");
+  }
 }

@@ -1,7 +1,7 @@
 import { Middleware } from ".";
 import { authorization } from "./authorization";
 import { Role } from "../entities";
-import { PermissionError } from "../errors";
+import { ForbiddenError } from "../errors";
 
 describe("Authorization middleware", () => {
   let middleware: Middleware;
@@ -29,7 +29,7 @@ describe("Authorization middleware", () => {
     };
 
     expect(middleware(ctx, () => Promise.resolve())).rejects.toBeInstanceOf(
-      PermissionError
+      ForbiddenError
     );
   });
 

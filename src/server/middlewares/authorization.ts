@@ -1,7 +1,7 @@
 import { Context } from "koa";
 
 import { Middleware } from ".";
-import { PermissionError } from "../errors";
+import { ForbiddenError } from "../errors";
 import { User, Role } from "../entities";
 
 export function authorization(roles: Role[]): Middleware {
@@ -9,7 +9,7 @@ export function authorization(roles: Role[]): Middleware {
     const user: User = ctx.state.user;
 
     if (roles.indexOf(user.role) < 0) {
-      throw new PermissionError();
+      throw new ForbiddenError();
     }
 
     await next();
