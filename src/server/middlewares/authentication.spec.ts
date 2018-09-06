@@ -1,64 +1,76 @@
-import * as sinon from "sinon";
+import { mock, instance, verify, when, reset } from "ts-mockito";
+import { IMiddleware } from "koa-router";
 
 import { Role } from "@shared/contract";
 import { authentication } from "./authentication";
 import { UnauthorizedError } from "../errors";
+import { Authenticator, JWTAuthenticator } from "../lib/authentication";
 
 describe("authentication", () => {
-  const sandbox = sinon.createSandbox();
+  let MockAuthenticator: Authenticator;
+  let middleware: IMiddleware;
+
+  beforeEach(() => {
+    MockAuthenticator = mock(JWTAuthenticator);
+    middleware = authentication(instance(MockAuthenticator));
+  });
 
   afterEach(() => {
-    sandbox.restore();
+    reset(MockAuthenticator);
   });
 
   it("should set context with the user data", async () => {
+    const user = {
+      username: "jack",
+      hash: "$2b$08$Ozpshai8lfh.UvIM2mphHeGYY9p1xsNHYG4nFzpDfIQfSbODSYHOm",
+      firstName: "jack",
+      lastName: "rabbit",
+      role: Role.user,
+      email: "jack@example.com"
+    };
+
+    const token = "abc123";
+    when(MockAuthenticator.validate(token)).thenResolve(user);
+
     const ctx: any = {
       headers: {
-        authorization: "jwt token"
+        authorization: `Bearer ${token}`
       },
       state: {}
     };
 
-    const fakeAuthenticator: any = {
-      validate: sandbox.stub().returns({
-        username: "admin",
-        role: Role.admin
-      })
+    let nextCalled = false;
+    const next = () => {
+      nextCalled = true;
+      return Promise.resolve();
     };
 
-    const authenticationMiddleware = authentication(fakeAuthenticator);
+    await middleware(ctx, next);
 
-    const spy = sandbox.spy();
-    await authenticationMiddleware(ctx, spy);
-
-    expect(fakeAuthenticator.validate.calledOnce).toBe(true);
-    expect(ctx.state.user).toEqual({
-      username: "admin",
-      role: Role.admin
-    });
-
-    expect(spy.calledOnce).toBe(true);
+    verify(MockAuthenticator.validate(token)).called();
+    expect(ctx.state.user).toEqual(user);
+    expect(nextCalled).toBe(true);
   });
 
-  it("should throw UnauthorizedError", async () => {
+  it("should throw UnauthorizedError with invalid token", async () => {
+    const token = "abc123";
     const ctx: any = {
       headers: {
-        authorization: "jwt token"
+        authorization: `Bearer ${token}`
       },
       state: {}
     };
 
-    const fakeAuthenticator: any = {
-      validate: sandbox.stub().throws(new UnauthorizedError())
+    when(MockAuthenticator.validate(token)).thenReject(new UnauthorizedError());
+
+    let nextCalled = false;
+    const next = () => {
+      nextCalled = true;
+      return Promise.resolve();
     };
 
-    const spy = sandbox.spy();
-    const authenticationMiddleware = authentication(fakeAuthenticator);
-
-    expect(authenticationMiddleware(ctx, spy)).rejects.toBeInstanceOf(
-      UnauthorizedError
-    );
-    expect(fakeAuthenticator.validate.calledOnce).toBe(true);
-    expect(spy.calledOnce).toBe(false);
+    expect(middleware(ctx, next)).rejects.toBeInstanceOf(UnauthorizedError);
+    verify(MockAuthenticator.validate(token)).called();
+    expect(nextCalled).toBe(false);
   });
 });
