@@ -4,7 +4,7 @@ import { FieldValidationError } from "../errors";
 
 describe("Validator middleware", () => {
   it("should throw error if required value is missing", async () => {
-    const middleware = validator({
+    const middleware = validator("Error message", {
       request: {
         body: {
           username: Joi.string().required(),
@@ -25,7 +25,8 @@ describe("Validator middleware", () => {
       }
     };
 
-    expect(middleware(ctx, next)).rejects.toBeInstanceOf(FieldValidationError);
+    const res = middleware(ctx, next);
+    expect(res).rejects.toBeInstanceOf(FieldValidationError);
     expect(nextCalled).toBe(false);
   });
 });

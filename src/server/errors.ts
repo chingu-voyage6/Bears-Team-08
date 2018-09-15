@@ -42,12 +42,18 @@ export class FieldValidationError extends AppError {
 
   constructor(message: string, fields: FieldError[], error?: Error) {
     super(ErrorKind.Validation, message, error);
+    this.fields = fields;
   }
 
   public toModel() {
     return {
       message: this.message,
-      fields: this.fields
+      error: {
+        fields: this.fields.map(f => ({
+          message: f.message,
+          kind: f.kind
+        }))
+      }
     };
   }
 }

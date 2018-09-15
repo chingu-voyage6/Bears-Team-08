@@ -15,7 +15,7 @@ export type SchemaMap = {
   };
 };
 
-export function validator(schema: SchemaMap): Middleware {
+export function validator(message: string, schema: SchemaMap): Middleware {
   return async (ctx, next) => {
     const res = Joi.validate(ctx, schema, {
       allowUnknown: true,
@@ -25,7 +25,7 @@ export function validator(schema: SchemaMap): Middleware {
     const err = res.error;
     if (err) {
       throw new FieldValidationError(
-        err.message,
+        message,
         err.details.map(f => ({
           message: f.message,
           path: f.path,
