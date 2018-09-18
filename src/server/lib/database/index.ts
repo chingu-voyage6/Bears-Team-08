@@ -142,7 +142,7 @@ export class TestDatabase extends Database {
   public async seed(): Promise<void> {
     const conn = await this.getConnection();
     return conn.seed.run({
-      directory: Path.resolve(__dirname, "seeds", "testing")
+      directory: Path.resolve(__dirname, "seeds")
     });
   }
 

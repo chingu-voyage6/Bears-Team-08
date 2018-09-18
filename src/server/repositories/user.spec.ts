@@ -1,10 +1,9 @@
-import { User } from "../entities";
-import { UserRepository } from "./user";
-import { TestDatabase, Database } from "../lib/database";
 import * as Crypto from "../lib/crypto";
 import { Role } from "@shared/contract";
+import { TestDatabase, Database } from "../lib/database";
+import { User } from "../entities";
+import { UserRepository } from "./user";
 import { ValidationError } from "../errors";
-
 import { users as testUsers } from "../testUtil";
 
 describe("UserRepository", () => {
@@ -23,7 +22,6 @@ describe("UserRepository", () => {
   });
 
   describe("user pagination", async () => {
-    // const users = await Promise.all(testUsers.slice(8).map(repo.insert));
     it("should be able to grab 10 users", async () => {
       const users = await repo.find();
       expect(users).toHaveLength(10);

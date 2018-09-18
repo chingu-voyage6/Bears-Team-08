@@ -1,5 +1,4 @@
-import { Role } from "@shared/contract";
-import { User } from "./entities";
+import { User, Role } from "./entities";
 import { SqlUser } from "./repositories/user";
 import { uuidv4 } from "./lib/crypto";
 

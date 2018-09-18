@@ -15,6 +15,10 @@ export class UserManager {
     this.auth = auth;
   }
 
+  public findUsers = async (limit: number = 10, offset: number = 0) => {
+    return this.repo.find(limit, offset);
+  };
+
   public findByUsername = async (username: string): Promise<User> => {
     return this.repo.findByUsername(username);
   };

@@ -9,7 +9,8 @@
     "client:watch": "npm run client watch",
     "server": "nodemon src/server/index.ts",
     "server:prod": "NODE_ENV=production nodemon src/server/index.ts",
-    "migrate": "ts-node scripts/migrations.ts",
+    "migrate": "ts-node -r tsconfig-paths/register scripts/migrations.ts",
+		"seed": "ts-node -r tsconfig-paths/register scripts/seed.ts",
     "test": "NODE_ENV=testing jest --config jestConfig.js"
   },
   "dependencies": {

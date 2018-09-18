@@ -11,7 +11,21 @@ export class UserController {
   }
 
   public index = async (ctx: Context) => {
-    // const users = await this.manager.
+    const { unsafeLimit, unsafeOffset } = ctx.query;
+    const limit = (() => {
+      const n = Number.parseInt(ctx.query["limit"]) || 10;
+      return n;
+    })();
+    const offset = Number.parseInt(ctx.query["offset"]) || 0;
+
+    const users = await this.manager.findUsers(limit, offset);
+    const url = ctx.URL.origin + ctx.URL.pathname;
+    ctx.body = {
+      url: ctx.URL,
+      next: `${url}?limit=${limit}&offset=${offset + limit}`,
+      count: users.length,
+      users
+    };
   };
 
   public create = async (ctx: Context) => {

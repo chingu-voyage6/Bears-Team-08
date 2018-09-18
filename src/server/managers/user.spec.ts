@@ -15,15 +15,6 @@ describe("UserManager", async () => {
   let MockUserRepo: UserRepository;
   let manager: UserManager;
 
-  // const user = {
-  //   username: "jack",
-  //   hash: "$2b$08$Ozpshai8lfh.UvIM2mphHeGYY9p1xsNHYG4nFzpDfIQfSbODSYHOm",
-  //   firstName: "jack",
-  //   lastName: "rabbit",
-  //   role: Role.user,
-  //   email: "jack@example.com"
-  // };
-
   beforeEach(async () => {
     MockHasher = mock(BCryptHasher);
     MockUserRepo = mock(UserRepository);
