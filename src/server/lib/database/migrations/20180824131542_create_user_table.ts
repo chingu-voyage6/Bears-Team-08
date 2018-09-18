@@ -24,6 +24,8 @@ async function migrateUserTable(db: knex): Promise<void> {
         .notNullable()
         .defaultTo("user");
       t.timestamps();
+
+      t.index(["username"]);
     });
   }
 }

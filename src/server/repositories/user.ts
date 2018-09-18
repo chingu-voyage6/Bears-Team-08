@@ -2,8 +2,9 @@ import { Role } from "@shared/contract";
 import { User } from "../entities";
 import { Database } from "../lib/database";
 import { NotFoundError, ValidationError } from "../errors";
+import { uuidv4 } from "../lib/crypto";
 
-export type RawUser = {
+export type SqlUser = {
   id?: string;
   username?: string;
   first_name?: string;
@@ -21,6 +22,16 @@ export class UserRepository {
 
   constructor(db: Database) {
     this.db = db;
+  }
+
+  public async find(limit: number = 10, offset: number = 0): Promise<User[]> {
+    const conn = await this.db.getConnection();
+    const users = await conn
+      .table(this.TABLE)
+      .orderBy("username")
+      .limit(limit)
+      .offset(offset);
+    return users.map(this.transform);
   }
 
   public async findByUsername(username: string): Promise<User> {
@@ -43,6 +54,7 @@ export class UserRepository {
       .table(this.TABLE)
       .where({ email })
       .first();
+
     if (!user) {
       throw new NotFoundError(user);
     }
@@ -54,24 +66,35 @@ export class UserRepository {
     const now = new Date();
 
     const conn = await this.db.getConnection();
-    const rawUser: RawUser = {};
+    const rawUser: SqlUser = {};
+
+    const sqlUser: SqlUser = {
+      id: uuidv4(),
+      username: user.username,
+      hash: user.hash,
+      first_name: user.firstName,
+      last_name: user.lastName,
+      email: user.email,
+      role: user.role || Role.user,
+      created_at: now,
+      updated_at: now
+    };
 
     try {
-      const res = await conn.table(this.TABLE).insert({
-        username: user.username,
-        hash: user.hash,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        role: user.role || Role.user,
-        created_at: now,
-        updated_at: now
-      });
-      user = this.transform(res);
-      return user;
+      const res = await conn
+        .table(this.TABLE)
+        .insert(sqlUser)
+        .returning("*");
+      return this.transform(res[0]);
     } catch (err) {
-      if (err.code === "ER_DUP_ENTRY" || err.code === "SQLITE_CONSTRAINT") {
-        throw new ValidationError(`Username ${user.username} already exists`);
+      if (
+        err.constraint === "user_username_unique" ||
+        err.code === "SQLITE_CONSTRAINT"
+      ) {
+        throw new ValidationError(
+          `User "${user.username}" already exists`,
+          err
+        );
       }
 
       throw err;
@@ -83,7 +106,7 @@ export class UserRepository {
     user.updatedAt = now;
 
     const conn = await this.db.getConnection();
-    await conn
+    const res = await conn
       .table(this.TABLE)
       .update({
         email: user.email,
@@ -94,6 +117,7 @@ export class UserRepository {
       })
       .where("username", user.username);
 
+    user = await this.findByUsername(user.username);
     return user;
   }
 
@@ -125,7 +149,7 @@ export class UserRepository {
     }
   }
 
-  private transform(row: RawUser): User {
+  private transform(row: SqlUser): User {
     return {
       id: row.id,
       email: row.email,

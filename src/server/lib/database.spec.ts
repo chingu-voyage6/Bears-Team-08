@@ -1,12 +1,12 @@
 import { Database, TestDatabase, Connection } from "./database";
 import * as Config from "../config";
+import { users as testUsers } from "../testUtil";
 
 describe("Database api", async () => {
   let database: Database;
   let conn: Connection;
 
   beforeAll(async () => {
-    // database = new Database(Config.dbConfig);
     database = new TestDatabase();
     conn = await database.getConnection();
   });
@@ -70,7 +70,7 @@ describe("Database api", async () => {
 
       await database.seed();
       const users = await conn.table("user").select();
-      const expectedUsernames = ["jack", "jill", "abby"];
+      const expectedUsernames = testUsers.map(user => user.username);
       const usernames = users.map(u => u.username);
       for (const username of expectedUsernames) {
         expect(usernames).toContain(username);

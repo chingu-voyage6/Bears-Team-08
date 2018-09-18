@@ -2,10 +2,10 @@
 
 export interface UserJSON {
   id?: string;
+  email?: string;
   username?: string;
   firstName?: string;
   lastName?: string;
-  email?: string;
   role?: Role;
 }
 
@@ -20,7 +20,7 @@ export interface AuthUserJSON {
   role?: Role;
 }
 
-export interface CreateUser {
+export interface CreateUserJSON {
   username: string;
   password: string;
   email?: string;
