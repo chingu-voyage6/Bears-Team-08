@@ -6,7 +6,8 @@ import { User } from "../entities";
 import { UserManager } from "./user";
 import { UserRepository } from "../repositories";
 import { ValidationError } from "../errors";
-import { Role } from "@shared/contract";
+import { Role } from "../entities";
+import { users as testUsers } from "../testUtil";
 
 describe("UserManager", async () => {
   let MockHasher: BCryptHasher;
@@ -14,14 +15,14 @@ describe("UserManager", async () => {
   let MockUserRepo: UserRepository;
   let manager: UserManager;
 
-  const user = {
-    username: "jack",
-    hash: "$2b$08$Ozpshai8lfh.UvIM2mphHeGYY9p1xsNHYG4nFzpDfIQfSbODSYHOm",
-    firstName: "jack",
-    lastName: "rabbit",
-    role: Role.user,
-    email: "jack@example.com"
-  };
+  // const user = {
+  //   username: "jack",
+  //   hash: "$2b$08$Ozpshai8lfh.UvIM2mphHeGYY9p1xsNHYG4nFzpDfIQfSbODSYHOm",
+  //   firstName: "jack",
+  //   lastName: "rabbit",
+  //   role: Role.user,
+  //   email: "jack@example.com"
+  // };
 
   beforeEach(async () => {
     MockHasher = mock(BCryptHasher);
@@ -39,23 +40,26 @@ describe("UserManager", async () => {
   });
 
   it("should be able to login a user with valid credentials", async () => {
-    when(MockUserRepo.findByUsername("jack")).thenResolve(user);
+    const user = testUsers[0];
+    when(MockUserRepo.findByUsername(user.username)).thenResolve(user);
     when(MockHasher.verifyPassword("shh", user.hash)).thenResolve(true);
     when(MockAuth.signature(anything())).thenReturn("token");
 
-    const token = await manager.login("jack", "shh");
+    const token = await manager.login(user.username, "shh");
     expect(token).toEqual("token");
   });
 
   it("should not login a user with invalid credentials", async () => {
-    when(MockUserRepo.findByUsername("jack")).thenResolve(user);
+    const user = testUsers[0];
+    when(MockUserRepo.findByUsername(user.username)).thenResolve(user);
 
-    expect(manager.login("jack", "bad password")).rejects.toBeInstanceOf(
+    expect(manager.login(user.username, "bad password")).rejects.toBeInstanceOf(
       ValidationError
     );
   });
 
   it("should be able to create a new user", async () => {
+    const user = testUsers[0];
     const insertedUser: User = {
       ...user,
       createdAt: new Date(),

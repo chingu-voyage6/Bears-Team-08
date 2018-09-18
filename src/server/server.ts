@@ -64,8 +64,8 @@ export function createServer(application: Application): AppServer {
   app.use(Helmet());
 
   app.use(Middlewares.responseTime);
-  app.use(Middlewares.logRequest(application.logger));
-  app.use(Middlewares.errorHandler(application.logger));
+  app.use(Middlewares.logRequest(application.webLogger));
+  app.use(Middlewares.errorHandler(application.errorLogger));
 
   // if (Config.isProduction) {
   //   // this.app.use("/", Express.static(Config.staticFiles));

@@ -13,18 +13,24 @@ export async function init() {
   try {
     await app.init();
   } catch (err) {
-    app.logger.error("An error occured while initializing application:", err);
+    app.errorLogger.error(
+      "An error occured while initializing application:",
+      err
+    );
   }
 
   const server = createServer(app);
 
   try {
     server.listen(Config.port, () => {
-      app.logger.info(`Application running on port ${Config.port}`);
+      app.webLogger.info(`Application running on port ${Config.port}`);
     });
     registerProcessEvents(server, app);
   } catch (err) {
-    app.logger.error("An error occured while initializing application: ", err);
+    app.errorLogger.error(
+      "An error occured while initializing application: ",
+      err
+    );
     await app.shutdown();
     await server.closeServer();
   }
@@ -32,17 +38,17 @@ export async function init() {
 
 function registerProcessEvents(server: AppServer, app: Application) {
   process.on("uncaughtException", (err: Error) => {
-    app.logger.error("UncaughtException:", err);
+    app.errorLogger.error("UncaughtException:", err);
   });
 
   process.on("unhandledRejection", (err: Error) => {
-    app.logger.error("UnhandledRejection:", err);
+    app.errorLogger.error("UnhandledRejection:", err);
   });
 
   const signals = ["SIGTERM", "SIGINT"];
   signals.forEach(sig =>
     process.on(sig as any, async () => {
-      app.logger.info("Starting graceful shutdown");
+      app.webLogger.info("Starting graceful shutdown");
 
       let exitCode = 0;
       try {

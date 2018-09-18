@@ -1,4 +1,4 @@
-import { User, CreateUser } from "../entities";
+import { User, CreateUserJSON } from "../entities";
 import { UserRepository } from "../repositories";
 import { Hasher } from "../lib/crypto";
 import { Authenticator } from "../lib/authentication";
@@ -23,17 +23,16 @@ export class UserManager {
     return this.repo.findByEmail(email);
   };
 
-  public create = async (userJSON: CreateUser): Promise<User> => {
+  public create = async (userJSON: CreateUserJSON): Promise<User> => {
     const hashPassword = await this.hasher.hashPassword(userJSON.password);
-    const user: User = {
+    const user = await this.repo.insert({
       username: userJSON.username,
       firstName: userJSON.firstName,
       lastName: userJSON.lastName,
       email: userJSON.email,
       hash: hashPassword
-    };
-
-    return this.repo.insert(user);
+    });
+    return user;
   };
 
   public login = async (

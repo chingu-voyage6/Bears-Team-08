@@ -1,4 +1,4 @@
-import * as Components from "./components";
+import * as Modules from "./modules";
 import * as Config from "./config";
 import { Authenticator, JWTAuthenticator } from "./lib/authentication";
 import { BCryptHasher } from "./lib/crypto";
@@ -15,6 +15,7 @@ export type ApplicationConfig = {
 export class Application {
   public database: Database;
   public webLogger: Logger;
+  public errorLogger: Logger;
   public repositories: {
     user: UserRepository;
   };
@@ -25,18 +26,15 @@ export class Application {
     authenticator: Authenticator;
     hasher: BCryptHasher;
   };
-  public components: Components.Component[];
+  public components: Modules.ModuleFn[];
 
   private config: ApplicationConfig;
 
   constructor(config: ApplicationConfig) {
     this.config = config;
     this.components = [];
-    this.webLogger = baseLogger.child({ name: "Quick Draw" });
-  }
-
-  public get logger(): Logger {
-    return this.webLogger;
+    this.webLogger = baseLogger.child({ name: "Web Logs" });
+    this.errorLogger = baseLogger.child({ name: "Error logs" });
   }
 
   public async init(): Promise<Application> {
@@ -66,7 +64,7 @@ export class Application {
     };
 
     // create components
-    this.components.push(Components.userComponent(this));
+    this.components.push(Modules.userModule(this));
 
     return this;
   }

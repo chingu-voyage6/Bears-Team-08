@@ -1,9 +1,7 @@
 import { Context } from "koa";
-import { AuthUserJSON } from "@shared/contract";
-import { User } from "../../entities";
+import { User, CreateUserJSON, AuthUserJSON } from "../../entities";
 import { Authenticator } from "../../lib/authentication";
 import { UserManager } from "../../managers";
-import { CreateUser, UserModel } from "./model";
 
 export class UserController {
   private manager: UserManager;
@@ -12,13 +10,22 @@ export class UserController {
     this.manager = manager;
   }
 
-  public index = async (ctx: Context) => {};
+  public index = async (ctx: Context) => {
+    // const users = await this.manager.
+  };
 
   public create = async (ctx: Context) => {
     const createUserJSON = ctx.request.body;
-    const newUser = await this.manager.create(createUserJSON as CreateUser);
+    const newUser = await this.manager.create(createUserJSON as CreateUserJSON);
 
-    ctx.body = new UserModel(newUser);
+    ctx.body = {
+      username: newUser.username,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+      createdAt: newUser.createdAt,
+      role: newUser.role
+    } as User;
     ctx.status = 201;
     ctx.set("location", "/api/v1/users/me");
   };
@@ -37,6 +44,13 @@ export class UserController {
   public changePassword = async (ctx: Context) => {};
 
   public get = async (ctx: Context) => {};
+
+  public me = async (ctx: Context) => {
+    ctx.status = 200;
+    ctx.body = {
+      user: ctx.state.user
+    };
+  };
 
   public delete = async (ctx: Context) => {};
 }
