@@ -11,12 +11,7 @@ export class UserController {
   }
 
   public index = async (ctx: Context) => {
-    const { unsafeLimit, unsafeOffset } = ctx.query;
-    const limit = (() => {
-      const n = Number.parseInt(ctx.query["limit"]) || 10;
-      return n;
-    })();
-    const offset = Number.parseInt(ctx.query["offset"]) || 0;
+    const { limit, offset } = ctx.query;
 
     const users = await this.manager.findUsers(limit, offset);
     const url = ctx.URL.origin + ctx.URL.pathname;

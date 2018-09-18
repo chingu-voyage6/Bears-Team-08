@@ -5,6 +5,7 @@ import { Middleware } from ".";
 import { Role } from "@shared/contract";
 import { UnauthorizedError } from "../errors";
 import { authentication } from "./authentication";
+import { users as testUsers } from "../testUtil";
 
 describe("Authentication middleware", () => {
   let MockAuthenticator: Authenticator;
@@ -20,14 +21,7 @@ describe("Authentication middleware", () => {
   });
 
   it("should set context with the user data", async () => {
-    const user = {
-      username: "jack",
-      hash: "$2b$08$Ozpshai8lfh.UvIM2mphHeGYY9p1xsNHYG4nFzpDfIQfSbODSYHOm",
-      firstName: "jack",
-      lastName: "rabbit",
-      role: Role.user,
-      email: "jack@example.com"
-    };
+    const user = testUsers[0];
 
     const token = "abc123";
     when(MockAuthenticator.validate(token)).thenResolve(user);

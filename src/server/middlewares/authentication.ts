@@ -13,7 +13,7 @@ export function authentication(authenticator: Authenticator): IMiddleware {
       const user = await authenticator.validate(token);
 
       ctx.state.user = user;
-      next();
+      await next();
     } else {
       throw new UnauthorizedError(
         new NotFoundError(`Authorization token not found`)

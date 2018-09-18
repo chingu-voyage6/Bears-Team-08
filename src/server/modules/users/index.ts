@@ -4,9 +4,10 @@ import * as bodyParser from "koa-bodyparser";
 
 import * as Middleware from "../../middlewares";
 import * as Validators from "./validators";
-import { ModuleFn, Router } from "..";
 import { Application } from "../../application";
 import { Authenticator } from "../../lib/authentication";
+import { ModuleFn, Router } from "..";
+import { QueryKind } from "../../middlewares/queryParser";
 import { Role } from "@shared/contract";
 import { UserController } from "./controller";
 
@@ -16,7 +17,15 @@ export function userRouter(
 ): Router {
   const router = new KoaRouter({ prefix: "/api/v1/users" });
 
-  router.get("/", bodyParser(), controller.index);
+  router.get(
+    "/",
+    bodyParser(),
+    Middleware.queryParser({
+      limit: { kind: QueryKind.Number, default: 10 },
+      offset: { kind: QueryKind.Number, default: 0 }
+    }),
+    controller.index
+  );
   router.post(
     "/",
     bodyParser(),
