@@ -13,13 +13,13 @@ async function migrateUserTable(db: knex): Promise<void> {
   if (!exists) {
     await db.schema.createTable("user", t => {
       t.uuid("id").primary();
-      t.string("username", 64)
+      t.string("username")
         .notNullable()
         .unique();
       t.string("first_name");
       t.string("last_name");
       t.string("hash", 256);
-      t.string("email", 64).unique();
+      t.string("email").unique();
       t.enum("role", ["user", "admin"])
         .notNullable()
         .defaultTo("user");

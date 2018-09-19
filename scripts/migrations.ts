@@ -15,9 +15,11 @@ async function init(): Promise<void> {
   try {
     switch (cmd) {
       case "new": {
+        const name = argv[1];
         if (!name) {
           return Promise.reject("Please pass in name of migration");
         }
+        await database.makeMigration(name);
         break;
       }
       case "latest": {

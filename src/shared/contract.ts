@@ -27,3 +27,12 @@ export interface CreateUserJSON {
   firstName?: string;
   lastName?: string;
 }
+
+export interface DrawingJSON {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  owner: UserJSON | string;
+  contributors: UserJSON[] | string[];
+}
