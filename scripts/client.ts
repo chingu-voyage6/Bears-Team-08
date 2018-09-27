@@ -5,14 +5,16 @@ import * as path from "path";
 
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import * as Webpack from "webpack";
-import * as WebpackServe from "webpack-serve";
+import * as WebpackDevServer from "webpack-dev-server";
+import * as Dotenv from "dotenv";
 import ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 
 import * as Paths from "../lib/paths";
 
+Dotenv.config();
+
 const isProduction = process.env.NODE_ENV === "production";
-process.env.WEBPACK_SERVE = process.env.NODE_ENV;
 
 const config: Webpack.Configuration = {
   target: "web",
@@ -98,6 +100,11 @@ const config: Webpack.Configuration = {
       watch: Paths.appSrc,
       tsconfig: Paths.appTsClientConfig,
       tslint: Paths.appTsLint
+    }),
+    new Webpack.EnvironmentPlugin({
+      NODE_ENV: process.env.NODE_ENV,
+      PUBLIC_URL: process.env.PUBLIC_URL,
+      SERVER_PORT: process.env.SERVER_PORT
     })
   ],
   performance: {
@@ -113,8 +120,14 @@ async function build(): Promise<void> {
 }
 
 async function watch(): Promise<void> {
-  const res = await WebpackServe({}, { config, clipboard: true });
-  return;
+  const compiler = Webpack(config);
+  const server = new WebpackDevServer(compiler, {
+    allowedHosts: ["localhost"],
+    compress: true,
+    https: true,
+    hot: true
+  });
+  server.listen(parseInt(process.env.REACT_APP_PORT, 10) || 8080);
 }
 
 enum Command {
