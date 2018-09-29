@@ -1,17 +1,5 @@
 import { Point } from "./point";
-
-export enum PaintKind {
-  Freehand = "FREEHAND",
-  Line = "LINE",
-  Image = "IMAGE",
-  Erase = "ERASE"
-}
-
-export type PaintJSON = {
-  kind: PaintKind;
-  display: boolean;
-  [key: string]: any;
-};
+import { PaintKind, PaintJSON } from "./contract";
 
 export abstract class Paint {
   public static fromJSON(json: PaintJSON): Paint {
@@ -28,11 +16,27 @@ export abstract class Paint {
   }
 
   public readonly kind: PaintKind;
-  private disp: boolean = true;
-  public abstract draw(ctx: CanvasRenderingContext2D);
-  public abstract toJSON(): PaintJSON;
 
-  public get display(): boolean {
+  protected x1: number;
+  protected y1: number;
+  protected x2: number;
+  protected y2: number;
+  private disp: boolean = true;
+
+  public abstract draw(ctx: CanvasRenderingContext2D);
+
+  public toJSON(): PaintJSON {
+    return {
+      kind: this.kind,
+      displayed: true,
+      x1: this.x1,
+      y1: this.y1,
+      x2: this.x2,
+      y2: this.y2
+    };
+  }
+
+  public get displayed(): boolean {
     return this.disp;
   }
 
@@ -66,13 +70,6 @@ export class PaintFreehand extends Paint {
 
   public popPoint(): Point {
     return this.rawPoints.pop();
-  }
-
-  public toJSON(): PaintJSON {
-    return {
-      kind: this.kind,
-      display: true
-    };
   }
 
   public get points() {
@@ -109,13 +106,6 @@ export class PaintLine extends Paint {
   public draw(context: CanvasRenderingContext2D) {
     return null;
   }
-
-  public toJSON(): PaintJSON {
-    return {
-      kind: this.kind,
-      display: true
-    };
-  }
 }
 
 export class PaintImage extends Paint {
@@ -126,13 +116,6 @@ export class PaintImage extends Paint {
   public kind = PaintKind.Image;
   public draw(context: CanvasRenderingContext2D) {
     return null;
-  }
-
-  public toJSON(): PaintJSON {
-    return {
-      kind: this.kind,
-      display: true
-    };
   }
 }
 
@@ -145,12 +128,5 @@ export class PaintErase extends Paint {
 
   public draw(context: CanvasRenderingContext2D) {
     return null;
-  }
-
-  public toJSON(): PaintJSON {
-    return {
-      kind: this.kind,
-      display: true
-    };
   }
 }

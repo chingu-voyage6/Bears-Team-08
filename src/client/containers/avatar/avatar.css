@@ -1,0 +1,5 @@
+:local .Avatar {
+  background-color: blue;
+  grid-area: Navbar;
+  user-select: none;
+}

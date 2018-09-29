@@ -10,7 +10,7 @@ export type Props = React.DetailedHTMLProps<
 
 export class ActiveButton extends React.Component<Props> {
   public render() {
-    const cssClasses = [Styles.Button];
+    const cssClasses = [Styles.ActiveButton];
     if (this.props.active) {
       cssClasses.push(Styles.Active);
     }

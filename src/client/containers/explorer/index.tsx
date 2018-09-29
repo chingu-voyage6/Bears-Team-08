@@ -14,19 +14,19 @@ export type ConnectedState = {
 };
 
 export type ConnectedDispatch = {
-  newDrawing: (name: string, token: string) => void;
+  createDrawing: (name: string, token: string) => void;
   getDrawings: (limit: number, offset: number) => void;
 };
 
 export type Props = ConnectedState & ConnectedDispatch;
 
 type ExplorerState = {
-  newDrawingName: string;
+  newDrawingNameField: string;
 };
 
 class BaseExplorer extends React.Component<Props, ExplorerState> {
   public state: ExplorerState = {
-    newDrawingName: ""
+    newDrawingNameField: ""
   };
 
   public render() {
@@ -36,7 +36,7 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
           Name:
           <input
             type="text"
-            value={this.state.newDrawingName}
+            value={this.state.newDrawingNameField}
             onChange={this.handleNewDrawingNameChange}
           />
         </label>
@@ -46,14 +46,14 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
   }
 
   private handleNewDrawingClick = () => {
-    this.props.newDrawing(this.state.newDrawingName, this.props.token);
+    this.props.createDrawing(this.state.newDrawingNameField, this.props.token);
   };
 
   private handleNewDrawingNameChange = (
     ev: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { value } = ev.target;
-    this.setState({ newDrawingName: value });
+    this.setState({ newDrawingNameField: value });
   };
 }
 
@@ -65,7 +65,7 @@ const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
 const mapDispatchToProps = (
   dispatch: Redux.Dispatch<Action>
 ): ConnectedDispatch => ({
-  newDrawing: (name: string, token: string) =>
+  createDrawing: (name: string, token: string) =>
     createDrawing({ name, token })(dispatch),
   getDrawings: (limit: number, offset: number) =>
     getDrawings({ limit, offset })(dispatch)

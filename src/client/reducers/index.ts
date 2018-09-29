@@ -17,6 +17,8 @@ const isDrawing = (state: boolean = false, action: Action): boolean => {
   switch (action.type) {
     case "CREATE_DRAWING_REQUEST":
       return true;
+    case "NAV_TO_EXPLORER":
+      return false;
     default:
       return state;
   }

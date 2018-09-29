@@ -4,6 +4,7 @@ type Err = { error: string };
 
 import * as Drawing from "./drawing";
 import * as User from "./user";
+import * as Base from "./base";
 
 export type ThunkAction<ReqKind, ResKind, ErrKind, _Req, _Res> =
   | ({ type: ReqKind } & Req<_Req>)
@@ -22,7 +23,8 @@ export type Action =
   | Drawing.SaveDrawing
   | Drawing.Undo
   | User.LoginUser
-  | User.LogoutUser;
+  | User.LogoutUser
+  | Base.NavToExplorer;
 
 type ActionKind = Action["type"];
 

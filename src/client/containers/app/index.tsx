@@ -2,12 +2,13 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
+import { Drawing } from "@shared/drawing";
+
 import * as Styles from "./app.css";
 import { DrawingBoard, Explorer, Navbar, Sidebar } from "../";
 import { Action } from "../../actions";
 import { State } from "../../reducers";
 import { compose } from "../../utils";
-import { Drawing } from "@shared/drawing";
 
 export type ConnectedState = {
   isDrawing: boolean;

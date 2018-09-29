@@ -2,28 +2,37 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
-import * as Styles from "./navbar.css";
-import { compose } from "../../utils";
-import { State } from "../../reducers";
-import { Action } from "../../actions";
 import { Drawing } from "@shared/drawing";
+
+import * as Styles from "./navbar.css";
+import { Action } from "../../actions";
+import { Avatar, Logo } from "../../components";
+import { State } from "../../reducers";
+import { compose } from "../../utils";
+import { navToExplorer } from "../../actions/base";
 
 export type ConnectedState = {
   isDrawing: boolean;
-  drawing: Drawing;
+  drawing?: Drawing;
 };
 
-export type ConnectedDispatch = {};
-
+export type ConnectedDispatch = {
+  navToExplorer: () => void;
+};
 export type Props = ConnectedState & ConnectedDispatch;
-
 class PureNavbar extends React.Component<Props> {
   public render() {
     const { drawing } = this.props;
 
     return (
       <section className={Styles.Navbar}>
-        {this.renderDrawingName(drawing)}
+        <header>
+          <a onClick={this.handleClick}>
+            <Logo className="" />
+          </a>
+          {this.renderDrawingName(drawing)}
+          <Avatar />
+        </header>
       </section>
     );
   }
@@ -39,15 +48,21 @@ class PureNavbar extends React.Component<Props> {
       return <></>;
     }
   };
+
+  private handleClick = () => {
+    this.props.navToExplorer();
+  };
 }
 
-const mapStateToProps = (state: State, ownProps: Props): ConnectedDispatch => ({
+const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
   isDrawing: state.isDrawing,
   drawing: state.drawing
 });
 const mapDispatchToProps = (
   dispatch: Redux.Dispatch<Action>
-): ConnectedDispatch => ({});
+): ConnectedDispatch => ({
+  navToExplorer: () => dispatch(navToExplorer())
+});
 
 export const Navbar = compose(
   PureNavbar,

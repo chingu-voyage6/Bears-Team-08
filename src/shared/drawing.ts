@@ -1,11 +1,6 @@
+import { DrawingJSON } from "./contract";
 import { Paint } from "./paint";
 import { uuidv4 } from "./util";
-
-export type DrawingJSON = {
-  id: string;
-  name: string;
-  paints: Paint[];
-};
 
 export type DrawingOptions = {
   paints?: Paint[];
