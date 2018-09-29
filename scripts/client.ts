@@ -20,7 +20,7 @@ const config: Webpack.Configuration = {
   target: "web",
   mode: isProduction ? "production" : "development",
   devtool: isProduction ? false : "cheap-module-source-map",
-  entry: { main: Paths.appClientIndex },
+  entry: { bundle: Paths.appClientIndex },
   output: {
     filename: path.join(
       "static",
@@ -104,7 +104,8 @@ const config: Webpack.Configuration = {
     new Webpack.EnvironmentPlugin({
       NODE_ENV: process.env.NODE_ENV,
       PUBLIC_URL: process.env.PUBLIC_URL,
-      SERVER_PORT: process.env.SERVER_PORT
+      SERVER_PORT: process.env.SERVER_PORT,
+      API_URL: process.env.API_URL
     })
   ],
   performance: {
@@ -127,7 +128,10 @@ async function watch(): Promise<void> {
     https: true,
     hot: true
   });
-  server.listen(parseInt(process.env.REACT_APP_PORT, 10) || 8080);
+  const port = parseInt(process.env.REACT_APP_PORT, 10) || 8080;
+  server.listen(port, (err?: Error) => {
+    console.log(`Listening on ${port}`);
+  });
 }
 
 enum Command {

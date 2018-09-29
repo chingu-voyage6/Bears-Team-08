@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as Styles from "./button.css";
+import * as Styles from "./activeButton.css";
 
 export type Props = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -8,7 +8,7 @@ export type Props = React.DetailedHTMLProps<
   active?: boolean;
 };
 
-export class Button extends React.Component<Props> {
+export class ActiveButton extends React.Component<Props> {
   public render() {
     const cssClasses = [Styles.Button];
     if (this.props.active) {

@@ -5,9 +5,10 @@ import {
   PaintFreehand,
   PaintLine,
   PaintErase,
-  Paint,
-  PaintKind
+  Paint
 } from "@shared/paint";
+
+import { PaintKind } from "@shared/contract";
 
 enum State {
   Init,

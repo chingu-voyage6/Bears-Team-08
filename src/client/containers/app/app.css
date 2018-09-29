@@ -6,14 +6,14 @@
 
 :local .App.Drawing {
   grid-template:
-    "Navbar Navbar Navbar" 100px
+    "Navbar Navbar Navbar" 50px
     "Sidebar DrawingPad DrawingPad" auto
     "Sidebar DrawingPad DrawingPad" auto / 100px 1fr 1fr;
 }
 
 :local .App.Exploring {
   grid-template:
-    "Navbar Navbar Navbar" 100px
+    "Navbar Navbar Navbar" 50px
     "Explorer Explorer Explorer" auto
     "Explorer Explorer Explorer" auto / 1fr 1fr 1fr;
 }

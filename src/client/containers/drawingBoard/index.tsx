@@ -5,19 +5,21 @@ import { connect } from "react-redux";
 
 import * as Styles from "./drawingBoard.css";
 import { State } from "../../reducers";
-import { Action, addPaint, updatePaint } from "../../actions";
+import { Action, addPaint, modifyPaint } from "../../actions";
 import { compose } from "../../utils";
 
 import { Pad } from "./pad";
-import { Paint, PaintKind } from "@shared/paint";
+import { PaintKind } from "@shared/contract";
+import { Paint } from "@shared/paint";
 import { Drawing } from "@shared/drawing";
 
 export type ConnectedState = {
   method: PaintKind;
   drawing: Drawing;
+  token: string;
 };
 export type ConnectedDispatch = {
-  addPaint: (paint: Paint) => void;
+  addPaint: (paint: Paint, token: string) => void;
 };
 
 export type Props = ConnectedState & ConnectedDispatch;
@@ -47,12 +49,14 @@ class PureDrawingBoard extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
-  method: state.method,
-  drawing: state.drawing
+  method: state.paintMethod,
+  drawing: state.drawing,
+  token: state.token
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({
-  addPaint: (paint: Paint) => addPaint(paint)(dispatch)
+  addPaint: (paint: Paint, token: string) =>
+    addPaint({ paint, token })(dispatch)
 });
 
 export const DrawingBoard = compose(

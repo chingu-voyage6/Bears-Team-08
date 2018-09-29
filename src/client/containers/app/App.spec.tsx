@@ -11,7 +11,7 @@ import { App } from ".";
 import { DrawingBoard, Explorer, Navbar, Sidebar } from "../";
 import { wrapComponentInProvider, createStore } from "@shared/test/util";
 import { rootReducer, initialState } from "../../reducers";
-import { newDrawing, changePaintMethod } from "../../actions";
+import { createDrawing, changePaintMethod } from "../../actions";
 
 describe("components/App", () => {
   it("renders", () => {
@@ -27,7 +27,7 @@ describe("components/App", () => {
 
     beforeEach(() => {
       store = createStore();
-      newDrawing({ name: drawingName })(store.dispatch);
+      createDrawing({ name: drawingName, token: "" })(store.dispatch);
       wrapper = mount(wrapComponentInProvider(<App />, store));
     });
 

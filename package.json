@@ -2,10 +2,11 @@
   "name": "quick-draw",
   "version": "0.1.0",
   "private": true,
+	"licencse": "MIT",
   "scripts": {
     "start": "concurrently \"npm run client:build\" \"npm run server:build\"",
     "client": "ts-node scripts/client.ts",
-    "client:build": "npm run client build",
+    "client:build": "NODE_ENV=production npm run client build",
     "client:watch": "npm run client watch",
     "server": "nodemon src/server/index.ts",
     "server:prod": "NODE_ENV=production nodemon src/server/index.ts",

@@ -3,11 +3,8 @@ import * as Redux from "redux";
 import { connect } from "react-redux";
 
 import * as Styles from "./app.css";
+import { DrawingBoard, Explorer, Navbar, Sidebar } from "../";
 import { Action } from "../../actions";
-import { DrawingBoard } from "../DrawingBoard";
-import { Explorer } from "../Explorer";
-import { Navbar } from "../Navbar";
-import { Sidebar } from "../Sidebar";
 import { State } from "../../reducers";
 import { compose } from "../../utils";
 import { Drawing } from "@shared/drawing";
@@ -21,19 +18,6 @@ export type ConnectedDispatch = {};
 export type Props = ConnectedState & ConnectedDispatch;
 
 class BaseApp extends React.Component<Props> {
-  public async componentWillMount() {
-    try {
-      const res = await fetch("/api");
-      const json = await res
-        .json()
-        .catch(error => Promise.reject({ msg: "rawr", error }));
-      const message = json.message;
-      this.setState({ message });
-    } catch (error) {
-      console.error("error caught", error);
-    }
-  }
-
   public componentDidUpdate() {
     if (this.props.isDrawing) {
       /* const id = this.props.drawing.id; */

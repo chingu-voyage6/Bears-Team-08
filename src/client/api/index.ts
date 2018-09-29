@@ -1,19 +1,63 @@
+import Axios, { AxiosRequestConfig } from "axios";
+
 import { Drawing } from "@shared/drawing";
 import { Paint } from "@shared/paint";
+
 import {
-  NewDrawingReq,
-  NewDrawingRes,
+  CreateDrawingReq,
+  CreateDrawingRes,
   LoadDrawingReq,
-  LoadDrawingRes
+  LoadDrawingRes,
+  LoginUserReq,
+  LoginUserRes,
+  SaveDrawingRes,
+  SaveDrawingReq,
+  AddPaintReq,
+  AddPaintRes,
+  ModifyPaintReq,
+  ModifyPaintRes,
+  DeletePaintReq,
+  DeletePaintRes,
+  RedoReq,
+  RedoRes,
+  UndoReq,
+  UndoRes,
+  GetDrawingsReq,
+  GetDrawingsRes
 } from "../actions";
 
-export const login = async (): Promise<any> => {
-  return Promise.resolve(0);
+const apiUrl = process.env.API_URL;
+
+export const loginUser = async (req: LoginUserReq): Promise<LoginUserRes> => {
+  return Axios({
+    url: "https://localhost:8090/api/v1/users",
+    method: "post",
+    data: {
+      username: req.username,
+      password: req.password
+    }
+  }).then(res => {
+    return res.data as LoginUserRes;
+  });
 };
 
+export const getDrawings = async (
+  req: GetDrawingsReq
+): Promise<GetDrawingsRes> => {
+  const opts: AxiosRequestConfig = {};
+  opts.url = `${apiUrl}/drawings`;
+  opts.method = "GET";
+  opts.data = { limit: req.limit, offset: req.offset };
+  if (req.token) {
+    opts.headers = { Authorization: `Bearer ${req.token}` };
+  }
+  return Axios(opts).then(res => res.data as GetDrawingsRes);
+};
+
+// Placeholders
 export const newDrawing = async (
-  req: NewDrawingReq
-): Promise<NewDrawingRes> => {
+  req: CreateDrawingReq
+): Promise<CreateDrawingRes> => {
   // axios("/api", { header: { AuthoSTuff: `Bearer ${user.token}` } });
   return new Promise(resolve => setTimeout(resolve, 5000)).then(() => {
     // console.log("resolved");
@@ -33,29 +77,32 @@ export const loadDrawing = async (
   // });
 };
 
-export const saveDrawing = async (drawing: Drawing): Promise<null> => {
+export const saveDrawing = async (
+  res: SaveDrawingRes
+): Promise<SaveDrawingReq> => {
   return Promise.resolve(null);
 };
 
-export const addPaint = async (paint: Paint): Promise<null> => {
+export const addPaint = async (res: AddPaintReq): Promise<AddPaintRes> => {
   return Promise.resolve(null);
 };
 
-export const updatePaint = async (req: {
-  index: number;
-  fn: (paint: Paint) => Paint;
-}): Promise<null> => {
+export const modifyPaint = async (
+  req: ModifyPaintReq
+): Promise<ModifyPaintRes> => {
   return Promise.resolve(null);
 };
 
-export const deletePaint = async (id: number): Promise<null> => {
+export const deletePaint = async (
+  req: DeletePaintReq
+): Promise<DeletePaintRes> => {
   return Promise.resolve(null);
 };
 
-export const redo = async (): Promise<null> => {
+export const redo = async (req: RedoReq): Promise<RedoRes> => {
   return;
 };
 
-export const undo = async (): Promise<null> => {
+export const undo = async (req: UndoReq): Promise<UndoRes> => {
   return;
 };

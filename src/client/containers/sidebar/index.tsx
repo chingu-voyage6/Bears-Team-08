@@ -3,20 +3,22 @@ import * as Redux from "redux";
 import { connect } from "react-redux";
 
 import * as Styles from "./sidebar.css";
-import { Button } from "../Button";
+
+import { ActiveButton } from "../../components";
 import { State } from "../../reducers";
 import { Action, redo, undo, changePaintMethod } from "../../actions";
 import { compose } from "../../utils";
-import { PaintKind } from "@shared/paint";
+import { PaintKind } from "@shared/contract";
 
 type ConnectedState = {
   method: PaintKind;
+  token: string;
 };
 
 type ConnectedDispatch = {
   changeMethod: (method: PaintKind) => void;
-  undo: () => void;
-  redo: () => void;
+  undo: (token: string) => void;
+  redo: (token: string) => void;
 };
 
 export type Props = ConnectedState & ConnectedDispatch;
@@ -32,8 +34,8 @@ class PureSideBar extends React.Component<Props> {
     const { method } = this.props;
     return (
       <section className={Styles.Sidebar}>
-        <Button onClick={this.props.undo}>undo</Button>
-        <Button onClick={this.props.redo}>redo</Button>
+        <ActiveButton onClick={this.handleUndoClick}>undo</ActiveButton>
+        <ActiveButton onClick={this.handleRedoClick}>redo</ActiveButton>
         {this.renderMethodButton(PaintKind.Freehand, "Freehand")}
         {this.renderMethodButton(PaintKind.Line, "Line")}
         {this.renderMethodButton(PaintKind.Image, "Image")}
@@ -46,29 +48,38 @@ class PureSideBar extends React.Component<Props> {
     this.props.changeMethod(method);
   };
 
+  private handleUndoClick = () => {
+    this.props.undo(this.props.token);
+  };
+
+  private handleRedoClick = () => {
+    this.props.undo(this.props.token);
+  };
+
   private renderMethodButton = (
     kind: PaintKind,
     text: string
-  ): React.ReactElement<Button> => {
+  ): React.ReactElement<ActiveButton> => {
     const active = this.props.method === kind;
     return (
-      <Button active={active} onClick={this.handleMethodClick(kind)}>
+      <ActiveButton active={active} onClick={this.handleMethodClick(kind)}>
         {text}
-      </Button>
+      </ActiveButton>
     );
   };
 }
 
 const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
-  method: state.method
+  method: state.paintMethod,
+  token: state.token
 });
 
 const mapDispatchToProps = (
   dispatch: Redux.Dispatch<Action>
 ): ConnectedDispatch => ({
   changeMethod: (method: PaintKind) => dispatch(changePaintMethod(method)),
-  undo: () => undo(dispatch),
-  redo: () => redo(dispatch)
+  undo: (token: string) => undo({ token })(dispatch),
+  redo: (token: string) => redo({ token })(dispatch)
 });
 
 export const Sidebar = compose(

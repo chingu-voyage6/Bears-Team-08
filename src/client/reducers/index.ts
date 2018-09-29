@@ -1,10 +1,10 @@
 import { combineReducers, Reducer } from "redux";
 
 import { Action } from "../actions";
-import { PaintKind } from "@shared/paint";
+import { PaintKind, UserJSON } from "@shared/contract";
 import { Drawing } from "@shared/drawing";
 
-const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
+const paintMethod = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   switch (action.type) {
     case "CHANGE_PAINT_METHOD":
       return action.method;
@@ -13,21 +13,21 @@ const method = (state: PaintKind = PaintKind.Freehand, action: Action) => {
   }
 };
 
-const isDrawing = (state: boolean = false, action: Action) => {
+const isDrawing = (state: boolean = false, action: Action): boolean => {
   switch (action.type) {
-    case "NEW_DRAWING_REQUEST":
+    case "CREATE_DRAWING_REQUEST":
       return true;
     default:
       return state;
   }
 };
 
-const drawing = (state: Drawing = null, action: Action) => {
+const drawing = (state: Drawing = null, action: Action): Drawing => {
   switch (action.type) {
-    case "NEW_DRAWING_REQUEST": {
+    case "CREATE_DRAWING_REQUEST": {
       return new Drawing(action.request.name);
     }
-    case "NEW_DRAWING_SUCCESS": {
+    case "CREATE_DRAWING_SUCCESS": {
       return action.response.drawing;
     }
     default:
@@ -35,13 +35,20 @@ const drawing = (state: Drawing = null, action: Action) => {
   }
 };
 
-const isSaving = (state: boolean = false, action: Action) => {
+const drawings = (state: Drawing[] = [], action: Action): Drawing[] => {
   switch (action.type) {
-    case "NEW_DRAWING_REQUEST":
+    default:
+      return state;
+  }
+};
+
+const isSaving = (state: boolean = false, action: Action): boolean => {
+  switch (action.type) {
+    case "CREATE_DRAWING_REQUEST":
     case "SAVE_DRAWING_REQUEST":
       return true;
-    case "NEW_DRAWING_SUCCESS":
-    case "NEW_DRAWING_ERROR":
+    case "CREATE_DRAWING_SUCCESS":
+    case "CREATE_DRAWING_ERROR":
     case "SAVE_DRAWING_SUCCESS":
     case "SAVE_DRAWING_ERROR":
       return false;
@@ -64,10 +71,8 @@ const isLoading = (state: boolean = false, action: Action): boolean => {
 
 const error = (state: string = "", action: Action): string => {
   switch (action.type) {
-    case "LOAD_DRAWING_REQUEST":
-    case "SAVE_DRAWING_REQUEST":
-      return "";
     case "LOAD_DRAWING_ERROR":
+    case "LOGIN_USER_ERROR":
     case "SAVE_DRAWING_ERROR":
       return action.error;
     default:
@@ -75,29 +80,56 @@ const error = (state: string = "", action: Action): string => {
   }
 };
 
+const token = (state: string = "", action: Action): string => {
+  switch (action.type) {
+    case "LOGIN_USER_SUCCESS":
+      return action.response.token;
+    default:
+      return state;
+  }
+};
+
+const user = (state: UserJSON = {}, action: Action): UserJSON => {
+  switch (action.type) {
+    case "LOGIN_USER_SUCCESS":
+      return action.response.user;
+    default:
+      return state;
+  }
+};
+
 export type State = {
-  method: PaintKind;
-  isDrawing: boolean;
   drawing?: Drawing;
-  isSaving: boolean;
-  isLoading: boolean;
+  drawings: Drawing[];
   error: string;
+  isDrawing: boolean;
+  isLoading: boolean;
+  isSaving: boolean;
+  paintMethod: PaintKind;
+  token?: string;
+  user?: UserJSON;
 };
 
 export const initialState: State = {
-  method: PaintKind.Freehand,
-  isDrawing: false,
   drawing: null,
-  isSaving: false,
+  drawings: [],
+  error: "",
+  isDrawing: false,
   isLoading: false,
-  error: ""
+  isSaving: false,
+  paintMethod: PaintKind.Freehand,
+  token: "",
+  user: {}
 };
 
 export const rootReducer = combineReducers<State>({
-  method,
-  isDrawing,
   drawing,
-  isSaving,
+  drawings,
+  error,
+  isDrawing,
   isLoading,
-  error
+  isSaving,
+  paintMethod,
+  token,
+  user
 });
