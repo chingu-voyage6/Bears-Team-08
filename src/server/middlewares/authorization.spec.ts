@@ -1,6 +1,6 @@
 import { Middleware } from ".";
 import { authorization } from "./authorization";
-import { Role } from "../entities";
+import { RoleKind } from "../entities";
 import { ForbiddenError } from "../errors";
 import { users } from "../testUtil";
 
@@ -12,7 +12,7 @@ describe("Authorization middleware", () => {
   });
 
   it("should reject when user is not authorized", () => {
-    const middleware = authorization([Role.admin]);
+    const middleware = authorization([RoleKind.admin]);
 
     const ctx: any = {
       state: {
@@ -26,7 +26,7 @@ describe("Authorization middleware", () => {
   });
 
   it("should do nothing if authorized", async () => {
-    const middleware = authorization([Role.user]);
+    const middleware = authorization([RoleKind.user]);
 
     const ctx: any = {
       state: {

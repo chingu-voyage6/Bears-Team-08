@@ -106,7 +106,8 @@ const config: Webpack.Configuration = {
       PUBLIC_URL: process.env.PUBLIC_URL,
       SERVER_PORT: process.env.SERVER_PORT,
       API_URL: process.env.API_URL
-    })
+    }),
+    new Webpack.HotModuleReplacementPlugin()
   ],
   performance: {
     hints: isProduction ? false : "warning"
@@ -123,9 +124,13 @@ async function build(): Promise<void> {
 async function watch(): Promise<void> {
   const compiler = Webpack(config);
   const server = new WebpackDevServer(compiler, {
+    host: "0.0.0.0",
     allowedHosts: ["localhost"],
     compress: true,
-    https: true,
+    https: {
+      key: fs.readFileSync(Paths.keyFile),
+      cert: fs.readFileSync(Paths.certFile)
+    },
     hot: true
   });
   const port = parseInt(process.env.REACT_APP_PORT, 10) || 8080;

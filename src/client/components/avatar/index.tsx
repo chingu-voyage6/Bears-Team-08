@@ -17,8 +17,11 @@ export class Avatar extends React.Component<Props> {
       ? Styles.Logo
       : [Styles.Logo].concat(this.props.className).join(" ");
 
-    const props = this.props;
-    const image = props.user ? <img src={Placeholder} /> : <></>;
+    const image = !this.props.user ? (
+      <img className={Styles.AvatarImage} src={Placeholder} />
+    ) : (
+      <></>
+    );
     return <div className={className}>{image}</div>;
   }
 }

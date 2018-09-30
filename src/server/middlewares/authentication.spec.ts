@@ -2,7 +2,7 @@ import { mock, instance, verify, when, reset } from "ts-mockito";
 
 import { Authenticator, JWTAuthenticator } from "../lib/authentication";
 import { Middleware } from ".";
-import { Role } from "@shared/contract";
+import { RoleKind } from "@shared/contract";
 import { UnauthorizedError } from "../errors";
 import { authentication } from "./authentication";
 import { users as testUsers } from "../testUtil";

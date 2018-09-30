@@ -11,5 +11,8 @@ async function init(): Promise<void> {
 }
 
 init()
-  .then(process.exit(0))
-  .catch(console.log);
+  .then(() => {
+    console.log("Done seeding");
+    process.exit(0);
+  })
+  .catch(e => console.error("ERROR:", e));

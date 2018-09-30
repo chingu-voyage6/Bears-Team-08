@@ -1,6 +1,10 @@
 :local .Navbar {
-  display: flex;
   background-color: blue;
   grid-area: Navbar;
-  user-select: none;
+  /* user-select: none; */
+}
+
+:local .Nav {
+  display: flex;
+  flex-direction: row;
 }

@@ -27,11 +27,13 @@ class PureNavbar extends React.Component<Props> {
     return (
       <section className={Styles.Navbar}>
         <header>
-          <a onClick={this.handleClick}>
-            <Logo className="" />
-          </a>
-          {this.renderDrawingName(drawing)}
-          <Avatar />
+          <nav className={Styles.Nav}>
+            <a onClick={this.handleClick}>
+              <Logo />
+            </a>
+            {this.renderDrawingName(drawing)}
+            <Avatar />
+          </nav>
         </header>
       </section>
     );

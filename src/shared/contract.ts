@@ -1,14 +1,16 @@
 // type information that is shared between the client and server
 
-export type Id = string;
+export type ID = string;
 
 export interface UserJSON {
-  id?: Id;
+  id?: ID;
   email?: string;
   username?: string;
   firstName?: string;
   lastName?: string;
   role?: RoleKind;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum RoleKind {
@@ -35,13 +37,15 @@ export interface LoginUserJSON {
 }
 
 export interface DrawingJSON {
-  id: Id;
+  id: ID;
   name: string;
   width: number;
   height: number;
-  owner: UserJSON | Id;
-  contributors: UserJSON[] | Id[];
+  owner: UserJSON | ID;
+  contributors: UserJSON[] | ID[];
   paints: PaintJSON[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum PaintKind {

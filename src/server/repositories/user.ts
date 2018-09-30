@@ -1,4 +1,4 @@
-import { Role } from "@shared/contract";
+import { RoleKind } from "@shared/contract";
 import { User } from "../entities";
 import { Database } from "../lib/database";
 import { NotFoundError, ValidationError } from "../errors";
@@ -11,7 +11,7 @@ export type SqlUser = {
   last_name?: string;
   hash?: string;
   email?: string;
-  role?: Role;
+  role?: RoleKind;
   created_at?: Date;
   updated_at?: Date;
 };
@@ -75,7 +75,7 @@ export class UserRepository {
       first_name: user.firstName,
       last_name: user.lastName,
       email: user.email,
-      role: user.role || Role.user,
+      role: user.role || RoleKind.user,
       created_at: now,
       updated_at: now
     };

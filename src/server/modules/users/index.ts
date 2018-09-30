@@ -8,7 +8,7 @@ import { Application } from "../../application";
 import { Authenticator } from "../../lib/authentication";
 import { ModuleFn, Router } from "..";
 import { QueryKind } from "../../middlewares/queryParser";
-import { Role } from "@shared/contract";
+import { RoleKind } from "@shared/contract";
 import { UserController } from "./controller";
 
 export function userRouter(
@@ -38,7 +38,7 @@ export function userRouter(
     "/",
     bodyParser(),
     Middleware.authentication(authenticator),
-    Middleware.authorization([Role.user, Role.admin]),
+    Middleware.authorization([RoleKind.user, RoleKind.admin]),
     controller.update
   );
 
@@ -46,7 +46,7 @@ export function userRouter(
   router.delete(
     "/:id",
     Middleware.authentication(authenticator),
-    Middleware.authorization([Role.admin]),
+    Middleware.authorization([RoleKind.admin]),
     controller.delete
   );
 
@@ -55,7 +55,7 @@ export function userRouter(
   router.get(
     "/me",
     Middleware.authentication(authenticator),
-    Middleware.authorization([Role.user, Role.admin]),
+    Middleware.authorization([RoleKind.user, RoleKind.admin]),
     controller.me
   );
 
@@ -63,7 +63,7 @@ export function userRouter(
     "/password",
     bodyParser(),
     Middleware.authentication(authenticator),
-    Middleware.authorization([Role.user, Role.admin]),
+    Middleware.authorization([RoleKind.user, RoleKind.admin]),
     controller.changePassword
   );
 
@@ -73,5 +73,7 @@ export function userRouter(
 export function userModule(application: Application): ModuleFn {
   const controller = new UserController(application.managers.user);
   const router = userRouter(controller, application.lib.authenticator);
-  return server => server.use(router.routes());
+  return appServer => {
+    appServer.app.use(router.routes());
+  };
 }

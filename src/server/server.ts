@@ -1,5 +1,6 @@
-import { Server, IncomingMessage, ServerResponse } from "http";
-import { Http2ServerRequest, Http2ServerResponse } from "http2";
+import * as Http from "http";
+import * as Http2 from "http2";
+import * as Https from "https";
 
 import * as Koa from "koa";
 import * as Helmet from "koa-helmet";
@@ -7,24 +8,34 @@ import * as Helmet from "koa-helmet";
 import * as Middlewares from "./middlewares";
 import { Application } from "./application";
 
+export interface AppServerOptions {
+  https?: boolean;
+  key?: string;
+  cert?: string;
+}
+
 export class AppServer {
-  private app: Koa;
-  private server: Server;
+  public readonly app: Koa;
+  public readonly server: Http.Server | Http2.Http2Server;
 
-  constructor(app: Koa) {
+  constructor(app: Koa, opts?: AppServerOptions) {
     this.app = app;
+
+    if (opts.https) {
+      this.server = Https.createServer(
+        { key: opts.key, cert: opts.cert },
+        this.app.callback()
+      );
+    } else {
+      this.server = Http.createServer(this.app.callback());
+    }
   }
 
-  public listen(port: number, cb?: () => void): Server {
-    this.server = this.app.listen(port, cb);
-    return this.server;
-  }
-
-  public callback(): (
-    req: IncomingMessage | Http2ServerRequest,
-    res: ServerResponse | Http2ServerResponse
-  ) => void {
-    return this.app.callback();
+  public listen(
+    port: number,
+    cb?: () => void
+  ): Http.Server | Http2.Http2Server {
+    return this.server.listen(port, cb);
   }
 
   public closeServer(): Promise<void> {
@@ -57,9 +68,12 @@ export class AppServer {
   }
 }
 
-export function createServer(application: Application): AppServer {
+export function createServer(
+  application: Application,
+  opts: AppServerOptions
+): AppServer {
   const app = new Koa();
-  const server = new AppServer(app);
+  const appServer = new AppServer(app, opts);
 
   app.use(Helmet());
 
@@ -72,9 +86,9 @@ export function createServer(application: Application): AppServer {
   //   // this.app.use("/:drawingId", Express.static(Config.indexFile));
   // }
 
-  for (const component of application.components) {
-    component(app);
+  for (const mod of application.modules) {
+    mod(appServer);
   }
 
-  return server;
+  return appServer;
 }

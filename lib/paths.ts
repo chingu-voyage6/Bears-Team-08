@@ -61,3 +61,5 @@ export const dotenv = resolveApp("../env");
 export const publicUrl = getPublicUrl(resolveApp("package.json"));
 export const servedPath = getServedPath(resolveApp("package.json"));
 export const yarnLockFile = resolveApp("yarn.lock");
+export const certFile = resolveApp("lib/crypto/localhost-cert.pem");
+export const keyFile = resolveApp("lib/crypto/localhost-privkey.pem");

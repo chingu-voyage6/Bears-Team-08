@@ -1,4 +1,4 @@
-import { PaintKind, Id } from "@shared/contract";
+import { PaintKind, ID } from "@shared/contract";
 import { Drawing } from "@shared/drawing";
 import { Paint } from "@shared/paint";
 
@@ -84,7 +84,7 @@ export const createDrawing = dispatcher(Api.newDrawing)<CreateDrawing>(
   asErr("CREATE_DRAWING_ERROR")
 );
 
-export type LoadDrawingReq = { id: Id; token: string };
+export type LoadDrawingReq = { id: ID; token: string };
 export type LoadDrawingRes = { drawing: Drawing };
 export type LoadDrawing = ThunkAction<
   "LOAD_DRAWING_REQUEST",

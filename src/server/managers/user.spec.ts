@@ -6,7 +6,7 @@ import { User } from "../entities";
 import { UserManager } from "./user";
 import { UserRepository } from "../repositories";
 import { ValidationError } from "../errors";
-import { Role } from "../entities";
+import { RoleKind } from "../entities";
 import { users as testUsers } from "../testUtil";
 
 describe("UserManager", async () => {

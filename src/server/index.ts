@@ -19,7 +19,11 @@ export async function init() {
     );
   }
 
-  const server = createServer(app);
+  const server = createServer(app, {
+    https: Config.isHttps,
+    cert: Config.certFile,
+    key: Config.keyFile
+  });
 
   try {
     server.listen(Config.port, () => {

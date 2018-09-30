@@ -2,11 +2,13 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
+import { Drawing } from "@shared/drawing";
+
 import * as Styles from "./explorer.css";
+import { ScrollBox } from "../../components";
 import { State } from "../../reducers";
 import { Action, createDrawing, loadDrawing, getDrawings } from "../../actions";
 import { compose } from "../../utils";
-import { Drawing } from "@shared/drawing";
 
 export type ConnectedState = {
   drawings: Drawing[];
@@ -28,10 +30,13 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
   public state: ExplorerState = {
     newDrawingNameField: ""
   };
+  public componentDidMount() {
+    this.fetchMoreDrawings();
+  }
 
   public render() {
     return (
-      <div className={Styles.Explorer}>
+      <section className={Styles.Explorer}>
         <label>
           Name:
           <input
@@ -41,7 +46,11 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
           />
         </label>
         <button onClick={this.handleNewDrawingClick}>New Drawing</button>
-      </div>
+        <ScrollBox
+          thingy={this.props.drawings}
+          fetch={this.fetchMoreDrawings}
+        />
+      </section>
     );
   }
 
@@ -54,6 +63,10 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
   ) => {
     const { value } = ev.target;
     this.setState({ newDrawingNameField: value });
+  };
+
+  private fetchMoreDrawings = (): void => {
+    this.props.getDrawings(10, this.props.drawings.length);
   };
 }
 

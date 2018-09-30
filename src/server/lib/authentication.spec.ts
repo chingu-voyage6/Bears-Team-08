@@ -1,6 +1,6 @@
 import { mock, instance, verify, when } from "ts-mockito";
 
-import { Role } from "@shared/contract";
+import { RoleKind } from "@shared/contract";
 import { JWTAuthenticator } from "./authentication";
 import { User } from "../entities";
 import { UserRepository } from "../repositories/user";
@@ -12,7 +12,7 @@ describe("JWTAuthenticator", () => {
     id: "6a543599-02bd-4776-aaec-391579e6f3cf",
     username: "jack",
     email: "jack@example.com",
-    role: Role.user
+    role: RoleKind.user
   };
 
   beforeEach(() => {

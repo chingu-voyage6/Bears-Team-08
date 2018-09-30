@@ -1,5 +1,5 @@
 import * as Crypto from "../lib/crypto";
-import { Role } from "@shared/contract";
+import { RoleKind } from "@shared/contract";
 import { TestDatabase, Database } from "../lib/database";
 import { User } from "../entities";
 import { UserRepository } from "./user";
