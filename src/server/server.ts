@@ -3,15 +3,17 @@ import * as Http2 from "http2";
 import * as Https from "https";
 
 import * as Koa from "koa";
+import * as Cors from "koa-cors";
 import * as Helmet from "koa-helmet";
 
 import * as Middlewares from "./middlewares";
 import { Application } from "./application";
 
 export interface AppServerOptions {
+  origin?: string;
   https?: boolean;
-  key?: string;
-  cert?: string;
+  key?: Buffer;
+  cert?: Buffer;
 }
 
 export class AppServer {
@@ -76,6 +78,7 @@ export function createServer(
   const appServer = new AppServer(app, opts);
 
   app.use(Helmet());
+  app.use(Cors({ origin: opts.origin || "*" }));
 
   app.use(Middlewares.responseTime);
   app.use(Middlewares.logRequest(application.webLogger));

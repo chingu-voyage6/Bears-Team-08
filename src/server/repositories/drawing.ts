@@ -1,5 +1,6 @@
 import { Database } from "../lib/database";
 import { DrawingJSON, ID } from "../entities";
+import { NotFoundError } from "../errors";
 
 export type SqlDrawing = {
   id?: ID;
@@ -41,6 +42,31 @@ export class DrawingRepository {
       .table(this.CONTRIBUTORS_TABLE)
       .where({ drawing_id: drawings.id });
     return drawings.map(this.transform);
+  }
+
+  public async findByID(id: ID): Promise<DrawingJSON> {
+    const conn = await this.db.getConnection();
+    const drawing = await conn
+      .table(this.TABLE)
+      .where({ id })
+      .first();
+
+    if (!drawing) {
+      throw new NotFoundError(drawing);
+    }
+
+    return this.transform(drawing);
+  }
+
+  public async findContributors(id: ID): Promise<ID[]> {
+    const conn = await this.db.getConnection();
+    const contribs = await conn.table(this.TABLE).where({ drawing_id: id });
+
+    if (!contribs) {
+      throw new NotFoundError(contribs);
+    }
+
+    return contribs;
   }
 
   private transform(row: SqlDrawing): DrawingJSON {

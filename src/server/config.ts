@@ -26,6 +26,7 @@ export const isHttps: boolean = process.env.HTTPS === "true";
 export const isDev: boolean = process.env.NODE_ENV === "development";
 export const certFile: Buffer = Fs.readFileSync(process.env.API_CERT_FILE);
 export const keyFile: Buffer = Fs.readFileSync(process.env.API_KEY_FILE);
+export const publicUrl: string = process.env.PUBLIC_URL;
 export const port: number = parseInt(process.env.PORT, 10) || 8090;
 if (isProduction && !process.env.SECRET_KEY) {
   throw new Error(

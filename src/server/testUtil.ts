@@ -6,14 +6,27 @@ function randomRange(min: number, max: number): number {
   return Math.floor(Math.random() * max);
 }
 
+function _in<T>(x: T, xs: T[]): boolean {
+  for (let i = 0; i < xs.length; i++) {
+    if (x === xs[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function getContributors(count: number): number[] {
   const contributors: number[] = [];
   while (true) {
-    if (Math.random() < 0.75) {
+    if (Math.random() > 0.75) {
       return contributors;
     }
 
-    contributors.push(randomRange(0, count));
+    let contributor: number;
+    do {
+      contributor = randomRange(0, count);
+    } while (_in(contributor, contributors));
+    contributors.push(contributor);
   }
 }
 

@@ -20,6 +20,7 @@ export async function init() {
   }
 
   const server = createServer(app, {
+    origin: Config.publicUrl,
     https: Config.isHttps,
     cert: Config.certFile,
     key: Config.keyFile
