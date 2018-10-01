@@ -2,12 +2,18 @@ import * as React from "react";
 import * as Redux from "redux";
 import { connect } from "react-redux";
 
+import { ID } from "@shared/contract";
 import { Drawing } from "@shared/drawing";
 
 import * as Styles from "./explorer.css";
-import { ScrollBox } from "../../components";
+import { DrawingStory, ScrollBox } from "../../components";
 import { State } from "../../reducers";
-import { Action, createDrawing, loadDrawing, getDrawings } from "../../actions";
+import {
+  Action,
+  createDrawing,
+  fetchDrawings,
+  loadDrawing
+} from "../../actions";
 import { compose } from "../../utils";
 
 export type ConnectedState = {
@@ -17,7 +23,7 @@ export type ConnectedState = {
 
 export type ConnectedDispatch = {
   createDrawing: (name: string, token: string) => void;
-  getDrawings: (limit: number, offset: number) => void;
+  fetchDrawings: (limit: number, offset: number) => void;
 };
 
 export type Props = ConnectedState & ConnectedDispatch;
@@ -30,9 +36,6 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
   public state: ExplorerState = {
     newDrawingNameField: ""
   };
-  public componentDidMount() {
-    this.fetchMoreDrawings();
-  }
 
   public render() {
     return (
@@ -47,8 +50,9 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
         </label>
         <button onClick={this.handleNewDrawingClick}>New Drawing</button>
         <ScrollBox
-          thingy={this.props.drawings}
+          items={this.props.drawings}
           fetch={this.fetchMoreDrawings}
+          renderItem={this.renderDrawingStory}
         />
       </section>
     );
@@ -66,7 +70,12 @@ class BaseExplorer extends React.Component<Props, ExplorerState> {
   };
 
   private fetchMoreDrawings = (): void => {
-    this.props.getDrawings(10, this.props.drawings.length);
+    this.props.fetchDrawings(20, this.props.drawings.length);
+  };
+
+  private renderDrawingStory = (drawing: Drawing) => {
+    console.log(drawing);
+    return <DrawingStory drawing={drawing} />;
   };
 }
 
@@ -80,8 +89,8 @@ const mapDispatchToProps = (
 ): ConnectedDispatch => ({
   createDrawing: (name: string, token: string) =>
     createDrawing({ name, token })(dispatch),
-  getDrawings: (limit: number, offset: number) =>
-    getDrawings({ limit, offset })(dispatch)
+  fetchDrawings: (limit: number, offset: number) =>
+    fetchDrawings({ limit, offset })(dispatch)
 });
 
 export const Explorer = compose(

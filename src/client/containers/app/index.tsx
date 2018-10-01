@@ -12,6 +12,7 @@ import { compose } from "../../utils";
 
 export type ConnectedState = {
   isDrawing: boolean;
+  error: string;
 };
 
 export type ConnectedDispatch = {};
@@ -26,6 +27,9 @@ class BaseApp extends React.Component<Props> {
   }
 
   public render() {
+    if (this.props.error) {
+      alert(this.props.error);
+    }
     const { isDrawing } = this.props;
     return (
       <div
@@ -48,7 +52,8 @@ class BaseApp extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Props): ConnectedState => ({
-  isDrawing: state.isDrawing
+  isDrawing: state.isDrawing,
+  error: state.error
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch<Action>) => ({});

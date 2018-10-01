@@ -1,7 +1,7 @@
 import { combineReducers, Reducer } from "redux";
 
 import { Action } from "../actions";
-import { PaintKind, UserJSON } from "@shared/contract";
+import { PaintKind, UserJSON, ID } from "@shared/contract";
 import { Drawing } from "@shared/drawing";
 
 const paintMethod = (state: PaintKind = PaintKind.Freehand, action: Action) => {
@@ -38,7 +38,10 @@ const drawing = (state: Drawing = null, action: Action): Drawing => {
 };
 
 const drawings = (state: Drawing[] = [], action: Action): Drawing[] => {
+  console.log(action);
   switch (action.type) {
+    case "FETCH_DRAWINGS_SUCCESS":
+      return state.concat(action.response.drawings);
     default:
       return state;
   }
@@ -46,9 +49,12 @@ const drawings = (state: Drawing[] = [], action: Action): Drawing[] => {
 
 const isSaving = (state: boolean = false, action: Action): boolean => {
   switch (action.type) {
+    case "UNDO_REQUEST":
     case "CREATE_DRAWING_REQUEST":
     case "SAVE_DRAWING_REQUEST":
       return true;
+    case "UNDO_SUCCESS":
+    case "UNDO_ERROR":
     case "CREATE_DRAWING_SUCCESS":
     case "CREATE_DRAWING_ERROR":
     case "SAVE_DRAWING_SUCCESS":
@@ -62,9 +68,12 @@ const isSaving = (state: boolean = false, action: Action): boolean => {
 const isLoading = (state: boolean = false, action: Action): boolean => {
   switch (action.type) {
     case "LOAD_DRAWING_REQUEST":
+    case "FETCH_DRAWINGS_REQUEST":
       return true;
-    case "LOAD_DRAWING_SUCCESS":
+    case "FETCH_DRAWINGS_SUCCESS":
+    case "FETCH_DRAWINGS_ERROR":
     case "LOAD_DRAWING_ERROR":
+    case "LOAD_DRAWING_SUCCESS":
       return false;
     default:
       return state;
@@ -73,6 +82,7 @@ const isLoading = (state: boolean = false, action: Action): boolean => {
 
 const error = (state: string = "", action: Action): string => {
   switch (action.type) {
+    case "FETCH_DRAWINGS_ERROR":
     case "LOAD_DRAWING_ERROR":
     case "LOGIN_USER_ERROR":
     case "SAVE_DRAWING_ERROR":

@@ -1,19 +1,20 @@
 :local .App {
-  display: grid;
+  position: fixed;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 50px 1fr;
+  grid-template-columns: 50px 1fr;
 }
 
 :local .App.Drawing {
-  grid-template:
-    "Navbar Navbar Navbar" 50px
-    "Sidebar DrawingPad DrawingPad" auto
-    "Sidebar DrawingPad DrawingPad" auto / 100px 1fr 1fr;
+  grid-template-areas:
+    "Navbar  Navbar"
+    "Sidebar DrawingPad";
 }
 
 :local .App.Exploring {
-  grid-template:
-    "Navbar Navbar Navbar" 50px
-    "Explorer Explorer Explorer" auto
-    "Explorer Explorer Explorer" auto / 1fr 1fr 1fr;
+  grid-template-areas:
+    "Navbar   Navbar"
+    "Explorer Explorer";
 }

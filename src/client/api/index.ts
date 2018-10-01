@@ -23,7 +23,7 @@ import {
   UndoReq,
   UndoRes,
   GetDrawingsReq,
-  GetDrawingsRes
+  FetchDrawingsRes
 } from "../actions";
 
 const apiUrl = process.env.API_URL;
@@ -41,17 +41,17 @@ export const loginUser = async (req: LoginUserReq): Promise<LoginUserRes> => {
   });
 };
 
-export const getDrawings = async (
+export const fetchDrawings = async (
   req: GetDrawingsReq
-): Promise<GetDrawingsRes> => {
+): Promise<FetchDrawingsRes> => {
   const opts: AxiosRequestConfig = {};
   opts.url = `${apiUrl}/drawings`;
   opts.method = "GET";
-  opts.data = { limit: req.limit, offset: req.offset };
+  opts.params = { limit: req.limit, offset: req.offset };
   if (req.token) {
     opts.headers = { Authorization: `Bearer ${req.token}` };
   }
-  return Axios(opts).then(res => res.data as GetDrawingsRes);
+  return Axios(opts).then(res => res.data as FetchDrawingsRes);
 };
 
 // Placeholders

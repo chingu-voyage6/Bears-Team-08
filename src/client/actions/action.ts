@@ -15,7 +15,7 @@ export type Action =
   | Drawing.AddPaint
   | Drawing.ChangePaintMethod
   | Drawing.DeletePaint
-  | Drawing.GetDrawings
+  | Drawing.FetchDrawings
   | Drawing.LoadDrawing
   | Drawing.ModifyPaint
   | Drawing.CreateDrawing

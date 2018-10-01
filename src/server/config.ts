@@ -19,15 +19,15 @@ function resolveApp(relativePath: string): string {
 }
 
 export const baseRoute: string = "/api";
+export const certFile: Buffer = Fs.readFileSync(process.env.API_CERT_FILE);
 export const indexFile: string = resolveApp("build/client/index.html");
+export const isDev: boolean = process.env.NODE_ENV === "development";
+export const isHttps: boolean = process.env.HTTPS === "true";
 export const isProduction: boolean = process.env.NODE_ENV === "production";
 export const isTest: boolean = process.env.NODE_ENV === "testing";
-export const isHttps: boolean = process.env.HTTPS === "true";
-export const isDev: boolean = process.env.NODE_ENV === "development";
-export const certFile: Buffer = Fs.readFileSync(process.env.API_CERT_FILE);
 export const keyFile: Buffer = Fs.readFileSync(process.env.API_KEY_FILE);
-export const publicUrl: string = process.env.PUBLIC_URL;
 export const port: number = parseInt(process.env.PORT, 10) || 8090;
+export const publicUrl: string = process.env.PUBLIC_URL;
 if (isProduction && !process.env.SECRET_KEY) {
   throw new Error(
     "SECRET_KEY environmental variable required to be set in production mode"

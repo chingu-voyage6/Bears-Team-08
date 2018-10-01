@@ -64,3 +64,10 @@ export type PaintJSON = {
   displayed: boolean;
   [key: string]: any;
 };
+
+export type FetchDrawingsJSON = {
+  next: string;
+  count: number;
+  url: string;
+  drawings: DrawingJSON;
+};

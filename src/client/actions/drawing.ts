@@ -11,19 +11,24 @@ export type GetDrawingsReq = {
   offset: number;
   limit: number;
 };
-export type GetDrawingsRes = { drawings: Drawing[] };
-export type GetDrawings = ThunkAction<
-  "GET_DRAWINGS_REQUEST",
-  "GET_DRAWINGS_SUCCESS",
-  "GET_DRAWINGS_ERROR",
+export type FetchDrawingsRes = {
+  next: string;
+  url: string;
+  count: number;
+  drawings: Drawing[];
+};
+export type FetchDrawings = ThunkAction<
+  "FETCH_DRAWINGS_REQUEST",
+  "FETCH_DRAWINGS_SUCCESS",
+  "FETCH_DRAWINGS_ERROR",
   GetDrawingsReq,
-  GetDrawingsRes
+  FetchDrawingsRes
 >;
 
-export const getDrawings = dispatcher(Api.getDrawings)<GetDrawings>(
-  asReq("GET_DRAWINGS_REQUEST"),
-  asRes("GET_DRAWINGS_SUCCESS"),
-  asErr("GET_DRAWINGS_ERROR")
+export const fetchDrawings = dispatcher(Api.fetchDrawings)<FetchDrawings>(
+  asReq("FETCH_DRAWINGS_REQUEST"),
+  asRes("FETCH_DRAWINGS_SUCCESS"),
+  asErr("FETCH_DRAWINGS_ERROR")
 );
 
 export type ChangePaintMethod = {
